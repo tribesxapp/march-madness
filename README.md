@@ -1,2 +1,2 @@
-# ace-the-brackets
- Blockchain Game with brackets
+# march-madness
+ Blockchain Game with brackets for NCAA Tournament
