@@ -1,0 +1,436 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_implementation",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_gamesHub",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_executor",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "proxy",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "MarchMadnessCreated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string[8]",
+        "name": "_firstFour",
+        "type": "string[8]"
+      },
+      {
+        "internalType": "string[16]",
+        "name": "_south",
+        "type": "string[16]"
+      },
+      {
+        "internalType": "string[16]",
+        "name": "_west",
+        "type": "string[16]"
+      },
+      {
+        "internalType": "string[16]",
+        "name": "_midwest",
+        "type": "string[16]"
+      },
+      {
+        "internalType": "string[16]",
+        "name": "_east",
+        "type": "string[16]"
+      }
+    ],
+    "name": "createMarchMadness",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "teamNameHome",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "teamNameAway",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "scoreHome",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "scoreAway",
+        "type": "uint256"
+      }
+    ],
+    "name": "determineChampion",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string[2]",
+        "name": "teamNamesHome",
+        "type": "string[2]"
+      },
+      {
+        "internalType": "string[2]",
+        "name": "teamNamesAway",
+        "type": "string[2]"
+      },
+      {
+        "internalType": "uint256[2]",
+        "name": "scoresHome",
+        "type": "uint256[2]"
+      },
+      {
+        "internalType": "uint256[2]",
+        "name": "scoresAway",
+        "type": "uint256[2]"
+      }
+    ],
+    "name": "determineFinalFourWinners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string[8]",
+        "name": "teamNames",
+        "type": "string[8]"
+      },
+      {
+        "internalType": "uint256[8]",
+        "name": "scores",
+        "type": "uint256[8]"
+      }
+    ],
+    "name": "determineFirstFourWinners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string[16]",
+        "name": "teamNames",
+        "type": "string[16]"
+      },
+      {
+        "internalType": "uint256[16]",
+        "name": "scores",
+        "type": "uint256[16]"
+      }
+    ],
+    "name": "determineRound1Winners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string[8]",
+        "name": "teamNames",
+        "type": "string[8]"
+      },
+      {
+        "internalType": "uint256[8]",
+        "name": "scores",
+        "type": "uint256[8]"
+      }
+    ],
+    "name": "determineRound2Winners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string[4]",
+        "name": "teamNames",
+        "type": "string[4]"
+      },
+      {
+        "internalType": "uint256[4]",
+        "name": "scores",
+        "type": "uint256[4]"
+      }
+    ],
+    "name": "determineRound3Winners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "teamNameHome",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "teamNameAway",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "scoreHome",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "scoreAway",
+        "type": "uint256"
+      }
+    ],
+    "name": "determineRound4Winners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "executor",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "gamesHub",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAllTeamsIdsNames",
+    "outputs": [
+      {
+        "internalType": "bytes[4]",
+        "name": "",
+        "type": "bytes[4]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "getFinalFourData",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "getGameStatus",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "regionName",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getRegionData",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "implementation",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "tournaments",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
