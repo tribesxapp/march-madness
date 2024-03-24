@@ -2,6 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
+import "../interfaces/IGamesHub.sol";
 import "./MarchMadness.sol";
 
 contract MarchMadnessFactory {
@@ -18,19 +19,24 @@ contract MarchMadnessFactory {
 
     /** STATE VARIABLES **/
     address public immutable implementation;
-    address public immutable gamesHub;
+    IGamesHub public immutable gamesHub;
     address public executor;
 
     mapping(uint256 => address) public tournaments;
 
     constructor(address _implementation, address _gamesHub, address _executor) {
         implementation = _implementation;
-        gamesHub = _gamesHub;
+        gamesHub = IGamesHub(_gamesHub);
         executor = _executor;
     }
 
     modifier onlyExecutor() {
         require(msg.sender == executor, "MF-01");
+        _;
+    }
+
+    modifier onlyAdministrator() {
+        require(gamesHub.checkRole(keccak256("ADMIN"), msg.sender), "MF-02");
         _;
     }
 
@@ -50,7 +56,7 @@ contract MarchMadnessFactory {
             _west,
             _midwest,
             _east,
-            gamesHub
+            address(gamesHub)
         );
         emit MarchMadnessCreated(clone, year);
         tournaments[year] = clone;
@@ -72,6 +78,22 @@ contract MarchMadnessFactory {
             teamNames,
             scores
         );
+    }
+
+    /**
+     * @dev Opens the bets for the current year.
+     * @param year The year of the tournament.
+     */
+    function closeBets(uint256 year) external onlyExecutor {
+        MarchMadness(tournaments[year]).closeBets();
+    }
+
+    /**
+     * @dev Opens the bets for the current year.
+     * @param year The year of the tournament.
+     */
+    function advanceRound(uint256 year) external onlyExecutor {
+        MarchMadness(tournaments[year]).advanceRound();
     }
 
     /**
@@ -207,18 +229,48 @@ contract MarchMadnessFactory {
     }
 
     /**
+     * @dev Sets a new executor address.
+     * @param _executor The address of the executor.
+     */
+    function setExecutor(address _executor) external onlyAdministrator {
+        executor = _executor;
+    }
+
+    /**
+     * @dev Resets the address of the MarchMadness contract for a specific year.
+     * @param year The year of the tournament.
+     */
+    function resetGame(uint256 year) external onlyExecutor {
+        tournaments[year] = address(0);
+    }
+
+    /**
      * @dev Get the data for a specific region.
      * * Region Data (encoded): string[16] teams, bytes[8] matchesRound1, bytes[4] matchesRound2, bytes[2] matchesRound3, bytes matchRound4, string winner
      * * Match Data (encoded): string home, string away, uint256 home_points, uint256 away_points, string winner
      * @param year The year of the tournament.
-     * @param regionName The name of the region.
-     * @return The region data in bytes format.
+     * @return The regions data in bytes format.
      */
-    function getRegionData(
-        uint256 year,
-        bytes32 regionName
-    ) public view returns (bytes memory) {
-        return MarchMadness(tournaments[year]).getRegionData(regionName);
+    function getAllRegionsData(
+        uint256 year
+    ) public view returns (bytes[4] memory) {
+        MarchMadness tournament = MarchMadness(tournaments[year]);
+        return [
+            tournament.getRegionData(tournament.SOUTH()),
+            tournament.getRegionData(tournament.WEST()),
+            tournament.getRegionData(tournament.MIDWEST()),
+            tournament.getRegionData(tournament.EAST())
+        ];
+    }
+
+    /**
+     * @dev Get the data for the First Four.
+     * * First Four Data (encoded): bytes[4] matches
+     * * Match Data (encoded): string home, string away, uint256 home_points, uint256 away_points, string winner
+     * @return The First Four data in bytes format.
+     */
+    function getFirstFourData(uint256 year) public view returns (bytes[4] memory) {
+        return MarchMadness(tournaments[year]).getFirstFourData();
     }
 
     /**

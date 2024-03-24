@@ -45,6 +45,32 @@
         "internalType": "uint256",
         "name": "year",
         "type": "uint256"
+      }
+    ],
+    "name": "advanceRound",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "closeBets",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
       },
       {
         "internalType": "string[8]",
@@ -312,9 +338,28 @@
     "name": "gamesHub",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IGamesHub",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAllRegionsData",
+    "outputs": [
+      {
+        "internalType": "bytes[4]",
+        "name": "",
+        "type": "bytes[4]"
       }
     ],
     "stateMutability": "view",
@@ -366,12 +411,12 @@
         "type": "uint256"
       }
     ],
-    "name": "getGameStatus",
+    "name": "getFirstFourData",
     "outputs": [
       {
-        "internalType": "bytes",
+        "internalType": "bytes[4]",
         "name": "",
-        "type": "bytes"
+        "type": "bytes[4]"
       }
     ],
     "stateMutability": "view",
@@ -383,14 +428,9 @@
         "internalType": "uint256",
         "name": "year",
         "type": "uint256"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "regionName",
-        "type": "bytes32"
       }
     ],
-    "name": "getRegionData",
+    "name": "getGameStatus",
     "outputs": [
       {
         "internalType": "bytes",
@@ -412,6 +452,32 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "resetGame",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_executor",
+        "type": "address"
+      }
+    ],
+    "name": "setExecutor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

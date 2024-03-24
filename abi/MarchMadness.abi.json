@@ -53,6 +53,20 @@
   },
   {
     "inputs": [],
+    "name": "advanceRound",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "closeBets",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "currentRound",
     "outputs": [
       {
@@ -242,10 +256,10 @@
   },
   {
     "inputs": [],
-    "name": "gamesHub",
+    "name": "gameContract",
     "outputs": [
       {
-        "internalType": "contract IGamesHub",
+        "internalType": "address",
         "name": "",
         "type": "address"
       }
@@ -280,6 +294,19 @@
         "internalType": "bytes",
         "name": "",
         "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getFirstFourData",
+    "outputs": [
+      {
+        "internalType": "bytes[4]",
+        "name": "",
+        "type": "bytes[4]"
       }
     ],
     "stateMutability": "view",
@@ -376,7 +403,7 @@
       },
       {
         "internalType": "address",
-        "name": "_gamesHub",
+        "name": "_gameContract",
         "type": "address"
       }
     ],

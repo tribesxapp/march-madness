@@ -10,5 +10,5 @@ actions:
         trigger:
           type: periodic
           periodic:
-            interval: 1h
+            interval: 10m
 project_slug: "perfectpool"

@@ -1,20 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "../interfaces/IGamesHub.sol";
-
 contract MarchMadness {
     /** CONSTANTS **/
     bytes32 public constant SOUTH = keccak256("SOUTH");
     bytes32 public constant WEST = keccak256("WEST");
     bytes32 public constant MIDWEST = keccak256("MIDWEST");
     bytes32 public constant EAST = keccak256("EAST");
-    bytes32[4] private matchCodes = [
-        keccak256("FFG1"),
-        keccak256("FFG2"),
-        keccak256("FFG3"),
-        keccak256("FFG4")
-    ];
+    bytes32[4] private matchCodes;
 
     /** STRUCTS AND ENUMS **/
     enum Status {
@@ -56,19 +49,16 @@ contract MarchMadness {
 
     uint256 public year;
     uint8 public currentRound;
-    uint8 public playersActualIndex = 1;
-    uint8 public matchesActualIndex = 1;
+    uint8 public playersActualIndex;
+    uint8 public matchesActualIndex;
 
     Status public status;
     FinalFour private finalFour;
-    IGamesHub public gamesHub;
+    address public gameContract;
 
     /** MODIFIERS **/
     modifier onlyGameContract() {
-        require(
-            msg.sender == gamesHub.games(keccak256("MM_DEPLOYER")),
-            "MM-01"
-        );
+        require(msg.sender == gameContract, "MM-01");
         _;
     }
 
@@ -79,7 +69,7 @@ contract MarchMadness {
      * @param _west The array of team names for the West region.
      * @param _midwest The array of team names for the Midwest region.
      * @param _east The array of team names for the East region.
-     * @param _gamesHub The address of the GamesHub contract.
+     * @param _gameContract The address of the GamesHub contract.
      */
     function initialize(
         uint256 _year,
@@ -88,10 +78,20 @@ contract MarchMadness {
         string[16] memory _west,
         string[16] memory _midwest,
         string[16] memory _east,
-        address _gamesHub
+        address _gameContract
     ) external {
         year = _year;
-        gamesHub = IGamesHub(_gamesHub);
+        gameContract = _gameContract;
+
+        matchCodes = [
+            keccak256("FFG1"),
+            keccak256("FFG2"),
+            keccak256("FFG3"),
+            keccak256("FFG4")
+        ];
+
+        playersActualIndex = 1;
+        matchesActualIndex = 1;
 
         // Inicializar First Four
         for (uint8 i = 0; i < 4; i++) {
@@ -183,7 +183,8 @@ contract MarchMadness {
     function determineFirstFourWinners(
         string[8] memory teamNames,
         uint256[8] memory scores
-    ) external onlyGameContract {
+    ) external {
+        // onlyGameContract {
         for (uint8 i = 0; i < 8; i += 2) {
             Match storage currentMatch = matches[
                 firstFourMatches[matchCodes[i / 2]]
@@ -208,11 +209,26 @@ contract MarchMadness {
 
             currentMatch.home_points = scores[i];
             currentMatch.away_points = scores[i + 1];
-
-            if (status == Status.BetsOn) {
-                status = Status.OnGoing;
-            }
         }
+    }
+
+    /**
+     * @dev Closes the bets for the tournament.
+     */
+    function closeBets() external {
+        // onlyGameContract {
+        require(status == Status.BetsOn, "MM-05");
+        currentRound = 1;
+        status = Status.OnGoing;
+    }
+
+    /**
+     * @dev Advances the round to the next one.
+     */
+    function advanceRound() external {
+        // onlyGameContract {
+        require(currentRound < 6, "MM-05");
+        currentRound++;
     }
 
     /**
@@ -225,15 +241,14 @@ contract MarchMadness {
         string memory regionName,
         string[16] memory teamNames,
         uint256[16] memory scores
-    ) external onlyGameContract {
+    ) external {
+        // onlyGameContract {
         require(currentRound == 1, "MM-05");
 
         bytes32 regionHash = keccak256(abi.encodePacked(regionName));
         Region storage region = regions[regionHash];
 
-        bool advanceRound = true;
-
-        uint8[4] memory winnersRound2;
+        uint8[8] memory winnersRound2;
         uint8 winnersIndex = 0;
 
         for (uint8 i = 0; i < 16; i += 2) {
@@ -250,7 +265,6 @@ contract MarchMadness {
             );
 
             if (scores[i] == 0 && scores[i + 1] == 0) {
-                advanceRound = false;
                 continue;
             }
 
@@ -270,21 +284,13 @@ contract MarchMadness {
                 matches[matchesActualIndex].home = winnersRound2[
                     winnersIndex - 2
                 ];
-                matches[matchesActualIndex].home = winnersRound2[
+                matches[matchesActualIndex].away = winnersRound2[
                     winnersIndex - 1
                 ];
 
                 region.matchesRound2[(i / 4)] = matchesActualIndex;
                 matchesActualIndex++;
             }
-
-            if (status == Status.BetsOn) {
-                status = Status.OnGoing;
-            }
-        }
-
-        if (advanceRound) {
-            currentRound++;
         }
     }
 
@@ -298,59 +304,64 @@ contract MarchMadness {
         string memory regionName,
         string[8] memory teamNames,
         uint256[8] memory scores
-    ) external onlyGameContract {
+    ) external {
+        // onlyGameContract {
         require(currentRound == 2, "MM-05");
 
         bytes32 regionHash = keccak256(abi.encodePacked(regionName));
         Region storage region = regions[regionHash];
 
-        bool advanceRound = true;
-
-        uint8[2] memory winnersRound3;
+        uint8[4] memory winnersRound3;
         uint8 winnersIndex = 0;
 
         for (uint8 i = 0; i < 8; i += 2) {
             uint8 matchId = region.matchesRound2[i / 2];
             Match storage currentMatch = matches[matchId];
-            require(
-                currentMatch.home == teamToId[abi.encodePacked(teamNames[i])],
-                "MM-03"
-            );
-            require(
-                currentMatch.away ==
-                    teamToId[abi.encodePacked(teamNames[i + 1])],
-                "MM-04"
-            );
 
             if (scores[i] == 0 && scores[i + 1] == 0) {
-                advanceRound = false;
                 continue;
             }
 
-            currentMatch.winner = scores[i] > scores[i + 1]
-                ? currentMatch.home
-                : currentMatch.away;
+            uint8 homeId = teamToId[abi.encodePacked(teamNames[i])];
+            uint8 awayId = teamToId[abi.encodePacked(teamNames[i + 1])];
+            uint256 score_home = scores[i];
+            uint256 score_away = scores[i + 1];
 
-            currentMatch.home_points = scores[i];
-            currentMatch.away_points = scores[i + 1];
+            if (currentMatch.home == awayId && currentMatch.away == homeId) {
+                homeId = teamToId[abi.encodePacked(teamNames[i + 1])];
+                awayId = teamToId[abi.encodePacked(teamNames[i])];
+                score_home = scores[i + 1];
+                score_away = scores[i];
 
-            if (i % 4 == 0) {
+                currentMatch.home = homeId;
+                currentMatch.away = awayId;
+            } else {
+                require(currentMatch.home == homeId, "MM-03");
+                require(currentMatch.away == awayId, "MM-04");
+            }
+
+            currentMatch.home_points = score_home;
+            currentMatch.away_points = score_away;
+
+            currentMatch.winner = score_home > score_away ? homeId : awayId;
+
+            if (i % 2 == 0) {
                 winnersRound3[winnersIndex] = currentMatch.winner;
                 winnersIndex++;
             }
-
-            if (i == 6) {
-                matches[matchesActualIndex].home = winnersRound3[0];
-                matches[matchesActualIndex].away = winnersRound3[1];
-
-                region.matchesRound3[0] = matchesActualIndex;
-                matchesActualIndex++;
-            }
         }
 
-        if (advanceRound) {
-            currentRound++;
-        }
+        matches[matchesActualIndex].home = winnersRound3[0];
+        matches[matchesActualIndex].away = winnersRound3[1];
+
+        region.matchesRound3[0] = matchesActualIndex;
+        matchesActualIndex++;
+
+        matches[matchesActualIndex].home = winnersRound3[2];
+        matches[matchesActualIndex].away = winnersRound3[3];
+
+        region.matchesRound3[1] = matchesActualIndex;
+        matchesActualIndex++;
     }
 
     /**
@@ -363,7 +374,8 @@ contract MarchMadness {
         string memory regionName,
         string[4] memory teamNames,
         uint256[4] memory scores
-    ) external onlyGameContract {
+    ) external {
+        // onlyGameContract {
         require(currentRound == 3, "MM-05");
 
         bytes32 regionHash = keccak256(abi.encodePacked(regionName));
@@ -372,32 +384,31 @@ contract MarchMadness {
         uint8[2] memory winnersRound4;
         uint8 winnersIndex = 0;
 
-        bool advanceRound = true;
-
         for (uint8 i = 0; i < 4; i += 2) {
             uint8 matchId = region.matchesRound3[i / 2];
             Match storage currentMatch = matches[matchId];
-            require(
-                currentMatch.home == teamToId[abi.encodePacked(teamNames[i])],
-                "MM-03"
-            );
-            require(
-                currentMatch.away ==
-                    teamToId[abi.encodePacked(teamNames[i + 1])],
-                "MM-04"
-            );
 
-            if (scores[i] == 0 && scores[i + 1] == 0) {
-                advanceRound = false;
-                continue;
+            uint8 homeId = teamToId[abi.encodePacked(teamNames[i])];
+            uint8 awayId = teamToId[abi.encodePacked(teamNames[i + 1])];
+            uint256 score_home = scores[i];
+            uint256 score_away = scores[i + 1];
+
+            if (currentMatch.home == awayId && currentMatch.away == homeId) {
+                currentMatch.home = homeId;
+                currentMatch.away = awayId;
+                currentMatch.home_points = score_away;
+                currentMatch.away_points = score_home;
+            } else {
+                require(currentMatch.home == homeId, "MM-03");
+                require(currentMatch.away == awayId, "MM-04");
+                currentMatch.home_points = score_home;
+                currentMatch.away_points = score_away;
             }
 
-            currentMatch.winner = scores[i] > scores[i + 1]
+            currentMatch.winner = currentMatch.home_points >
+                currentMatch.away_points
                 ? currentMatch.home
                 : currentMatch.away;
-
-            currentMatch.home_points = scores[i];
-            currentMatch.away_points = scores[i + 1];
 
             winnersRound4[winnersIndex] = currentMatch.winner;
             winnersIndex++;
@@ -408,10 +419,6 @@ contract MarchMadness {
 
         region.matchRound4 = matchesActualIndex;
         matchesActualIndex++;
-
-        if (advanceRound) {
-            currentRound++;
-        }
     }
 
     /**
@@ -428,33 +435,33 @@ contract MarchMadness {
         string memory teamNameAway,
         uint256 scoreHome,
         uint256 scoreAway
-    ) external onlyGameContract {
+    ) external {
+        // onlyGameContract {
         require(currentRound == 4, "MM-05");
 
         bytes32 regionHash = keccak256(abi.encodePacked(regionName));
         Region storage region = regions[regionHash];
         Match storage currentMatch = matches[region.matchRound4];
 
-        require(
-            currentMatch.home == teamToId[abi.encodePacked(teamNameHome)],
-            "MM-03"
-        );
-        require(
-            currentMatch.away == teamToId[abi.encodePacked(teamNameAway)],
-            "MM-04"
-        );
+        uint8 homeId = teamToId[abi.encodePacked(teamNameHome)];
+        uint8 awayId = teamToId[abi.encodePacked(teamNameAway)];
 
-        if (scoreHome == 0 && scoreAway == 0) {
-            revert("MM-06");
+        if (currentMatch.home == awayId && currentMatch.away == homeId) {
+            currentMatch.home = homeId;
+            currentMatch.away = awayId;
+            currentMatch.home_points = scoreAway;
+            currentMatch.away_points = scoreHome;
+        } else {
+            require(currentMatch.home == homeId, "MM-03");
+            require(currentMatch.away == awayId, "MM-04");
+            currentMatch.home_points = scoreHome;
+            currentMatch.away_points = scoreAway;
         }
 
-        uint8 winnerId = scoreHome > scoreAway
+        currentMatch.winner = currentMatch.home_points >
+            currentMatch.away_points
             ? currentMatch.home
             : currentMatch.away;
-        currentMatch.winner = winnerId;
-
-        currentMatch.home_points = scoreHome;
-        currentMatch.away_points = scoreAway;
 
         uint8 roundMatchId;
         if (regionHash == SOUTH) {
@@ -465,7 +472,7 @@ contract MarchMadness {
             } else {
                 roundMatchId = finalFour.matchesRound1[0];
             }
-            matches[roundMatchId].home = winnerId;
+            matches[roundMatchId].home = currentMatch.winner;
         } else if (regionHash == EAST) {
             if (finalFour.matchesRound1[0] == 0) {
                 matchesActualIndex++;
@@ -474,7 +481,7 @@ contract MarchMadness {
             } else {
                 roundMatchId = finalFour.matchesRound1[0];
             }
-            matches[roundMatchId].away = winnerId;
+            matches[roundMatchId].away = currentMatch.winner;
         } else if (regionHash == MIDWEST) {
             if (finalFour.matchesRound1[1] == 0) {
                 matchesActualIndex++;
@@ -483,7 +490,7 @@ contract MarchMadness {
             } else {
                 roundMatchId = finalFour.matchesRound1[1];
             }
-            matches[roundMatchId].home = winnerId;
+            matches[roundMatchId].home = currentMatch.winner;
         } else if (regionHash == WEST) {
             if (finalFour.matchesRound1[1] == 0) {
                 matchesActualIndex++;
@@ -492,16 +499,7 @@ contract MarchMadness {
             } else {
                 roundMatchId = finalFour.matchesRound1[1];
             }
-            matches[roundMatchId].away = winnerId;
-        }
-
-        if (
-            !(matches[finalFour.matchesRound1[0]].home == 0 &&
-                matches[finalFour.matchesRound1[0]].away == 0) &&
-            !(matches[finalFour.matchesRound1[1]].home == 0 &&
-                matches[finalFour.matchesRound1[1]].away == 0)
-        ) {
-            currentRound++;
+            matches[roundMatchId].away = currentMatch.winner;
         }
     }
 
@@ -517,7 +515,8 @@ contract MarchMadness {
         string[2] memory teamNamesAway,
         uint256[2] memory scoresHome,
         uint256[2] memory scoresAway
-    ) external onlyGameContract {
+    ) external {
+        // onlyGameContract {
         require(currentRound == 5, "MM-05");
 
         uint8[2] memory winners;
@@ -570,7 +569,8 @@ contract MarchMadness {
         string memory teamNameAway,
         uint256 scoreHome,
         uint256 scoreAway
-    ) external onlyGameContract {
+    ) external {
+        // onlyGameContract {
         require(currentRound == 6, "MM-05");
 
         Match storage currentMatch = matches[finalFour.matchFinal];
@@ -629,30 +629,22 @@ contract MarchMadness {
     ) external view returns (bytes memory) {
         bytes[8] memory matchesRound1;
         Region storage region = regions[regionName];
-        
+
         for (uint8 i = 0; i < 8; i++) {
-            matchesRound1[i] = getMatchData(
-                region.matchesRound1[i]
-            );
+            matchesRound1[i] = getMatchData(region.matchesRound1[i]);
         }
 
         bytes[4] memory matchesRound2;
         for (uint8 i = 0; i < 4; i++) {
-            matchesRound2[i] = getMatchData(
-                region.matchesRound2[i]
-            );
+            matchesRound2[i] = getMatchData(region.matchesRound2[i]);
         }
 
         bytes[2] memory matchesRound3;
         for (uint8 i = 0; i < 2; i++) {
-            matchesRound3[i] = getMatchData(
-                region.matchesRound3[i]
-            );
+            matchesRound3[i] = getMatchData(region.matchesRound3[i]);
         }
 
-        bytes memory matchRound4 = getMatchData(
-            region.matchRound4
-        );
+        bytes memory matchRound4 = getMatchData(region.matchRound4);
 
         string[16] memory _teams;
         for (uint8 i = 0; i < 16; i++) {
@@ -662,13 +654,26 @@ contract MarchMadness {
         // string[16] teams, bytes[8] matchesRound1, bytes[4] matchesRound2, bytes[2] matchesRound3, bytes matchRound4, string winner
         return
             abi.encode(
-                region.teams,
+                _teams,
                 matchesRound1,
                 matchesRound2,
                 matchesRound3,
                 matchRound4,
                 string(teams[region.winner])
             );
+    }
+
+    /**
+     * @dev Get the data for the First Four.
+     * @return The First Four data in bytes format.
+     */
+    function getFirstFourData() external view returns (bytes[4] memory) {
+        bytes[4] memory matchesFirstFour;
+        for (uint8 i = 0; i < 4; i++) {
+            matchesFirstFour[i] = getMatchData(firstFourMatches[matchCodes[i]]);
+        }
+
+        return matchesFirstFour;
     }
 
     /**
