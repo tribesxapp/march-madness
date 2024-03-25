@@ -732,4 +732,48 @@ contract MarchMadness {
         // string[16] memory, uint8[16] memory
         return abi.encode(_teams, _teamIds);
     }
+
+    /**
+     * @dev Build a single array of all winners IDs for all regions, in the order: East, South, West, Midwest and the Final Four
+     * @return The full array of winners IDs.
+     */
+    function getFinalResult() public view returns (uint256[63] memory){
+        uint256[63] memory winners;
+
+        for (uint8 i = 0; i < 8; i++) {
+            winners[i] = matches[regions[EAST].matchesRound1[i]].winner;
+            winners[i + 8] = matches[regions[SOUTH].matchesRound1[i]].winner;
+            winners[i + 16] = matches[regions[WEST].matchesRound1[i]].winner;
+            winners[i + 24] = matches[regions[MIDWEST].matchesRound1[i]].winner;
+        }
+
+        for (uint8 i = 0; i < 4; i++) {
+            winners[i + 32] = matches[regions[EAST].matchesRound2[i]].winner;
+            winners[i + 36] = matches[regions[SOUTH].matchesRound2[i]].winner;
+            winners[i + 40] = matches[regions[WEST].matchesRound2[i]].winner;
+            winners[i + 44] = matches[regions[MIDWEST].matchesRound2[i]].winner;
+        }
+
+        for (uint8 i = 0; i < 2; i++) {
+            winners[i + 48] = matches[regions[EAST].matchesRound3[i]].winner;
+            winners[i + 50] = matches[regions[SOUTH].matchesRound3[i]].winner;
+            winners[i + 52] = matches[regions[WEST].matchesRound3[i]].winner;
+            winners[i + 54] = matches[regions[MIDWEST].matchesRound3[i]].winner;
+        }
+
+        winners[56] = matches[regions[EAST].matchRound4].winner;
+        winners[57] = matches[regions[SOUTH].matchRound4].winner;
+        winners[58] = matches[regions[WEST].matchRound4].winner;
+        winners[59] = matches[regions[MIDWEST].matchRound4].winner;
+
+        winners[60] = matches[finalFour.matchesRound1[0]].winner;
+        winners[61] = matches[finalFour.matchesRound1[1]].winner;
+        winners[62] = finalFour.winner;
+
+        return winners;
+    }
+
+    function getTeamSymbol(uint8 _teamId) external view returns (string memory) {
+        return string(teams[_teamId]);
+    }
 }

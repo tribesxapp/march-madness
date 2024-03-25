@@ -301,6 +301,19 @@
   },
   {
     "inputs": [],
+    "name": "getFinalResult",
+    "outputs": [
+      {
+        "internalType": "uint256[63]",
+        "name": "",
+        "type": "uint256[63]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getFirstFourData",
     "outputs": [
       {
@@ -359,6 +372,25 @@
       }
     ],
     "name": "getTeamName",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_teamId",
+        "type": "uint8"
+      }
+    ],
+    "name": "getTeamSymbol",
     "outputs": [
       {
         "internalType": "string",
