@@ -8,6 +8,9 @@ import "./MarchMadness.sol";
 contract MarchMadnessFactory {
     /** EVENTS **/
     event MarchMadnessCreated(address indexed proxy, uint256 year);
+    event ExecutorChanged(address indexed executor);
+    event TournamentReset(uint256 indexed year);
+    event Paused(bool paused);
 
     /** STRUCTS AND ENUMS **/
     enum Status {
@@ -21,6 +24,7 @@ contract MarchMadnessFactory {
     address public immutable implementation;
     IGamesHub public immutable gamesHub;
     address public executor;
+    bool public paused = false;
 
     mapping(uint256 => address) public tournaments;
 
@@ -68,15 +72,18 @@ contract MarchMadnessFactory {
      * @param year The year of the tournament.
      * @param teamNames The array of team names for the First Four matches.
      * @param scores The array of scores for the First Four matches.
+     * @param winners The array of winners for the First Four matches.
      */
     function determineFirstFourWinners(
         uint256 year,
         string[8] memory teamNames,
-        uint256[8] memory scores
+        uint256[8] memory scores,
+        string[4] memory winners
     ) external onlyExecutor {
         MarchMadness(tournaments[year]).determineFirstFourWinners(
             teamNames,
-            scores
+            scores,
+            winners
         );
     }
 
@@ -89,30 +96,25 @@ contract MarchMadnessFactory {
     }
 
     /**
-     * @dev Opens the bets for the current year.
-     * @param year The year of the tournament.
-     */
-    function advanceRound(uint256 year) external onlyExecutor {
-        MarchMadness(tournaments[year]).advanceRound();
-    }
-
-    /**
      * @dev Determines the winners of the Round 1 matches in a specific region.
      * @param year The year of the tournament.
      * @param regionName The name of the region.
      * @param teamNames The array of team names for the Round 1 matches.
      * @param scores The array of scores for the Round 1 matches.
+     * @param winners The array of winners for the Round 1 matches.
      */
     function determineRound1Winners(
         uint256 year,
         string memory regionName,
         string[16] memory teamNames,
-        uint256[16] memory scores
+        uint256[16] memory scores,
+        string[8] memory winners
     ) public onlyExecutor {
         MarchMadness(tournaments[year]).determineRound1Winners(
             regionName,
             teamNames,
-            scores
+            scores,
+            winners
         );
     }
 
@@ -122,17 +124,20 @@ contract MarchMadnessFactory {
      * @param regionName The name of the region.
      * @param teamNames The array of team names for the Round 2 matches.
      * @param scores The array of scores for the Round 2 matches.
+     * @param winners The array of winners for the Round 2 matches.
      */
     function determineRound2Winners(
         uint256 year,
         string memory regionName,
         string[8] memory teamNames,
-        uint256[8] memory scores
+        uint256[8] memory scores,
+        string[4] memory winners
     ) public onlyExecutor {
         MarchMadness(tournaments[year]).determineRound2Winners(
             regionName,
             teamNames,
-            scores
+            scores,
+            winners
         );
     }
 
@@ -142,17 +147,20 @@ contract MarchMadnessFactory {
      * @param regionName The name of the region.
      * @param teamNames The array of team names for the Round 3 matches.
      * @param scores The array of scores for the Round 3 matches.
+     * @param winners The array of winners for the Round 3 matches.
      */
     function determineRound3Winners(
         uint256 year,
         string memory regionName,
         string[4] memory teamNames,
-        uint256[4] memory scores
+        uint256[4] memory scores,
+        string[2] memory winners
     ) public onlyExecutor {
         MarchMadness(tournaments[year]).determineRound3Winners(
             regionName,
             teamNames,
-            scores
+            scores,
+            winners
         );
     }
 
@@ -164,6 +172,7 @@ contract MarchMadnessFactory {
      * @param teamNameAway The team name for the away side of the Round 4 match.
      * @param scoreHome The score for the home team in the Round 4 match.
      * @param scoreAway The score for the away team in the Round 4 match.
+     * @param winner The winner of the Round 4 match.
      */
     function determineRound4Winners(
         uint256 year,
@@ -171,37 +180,36 @@ contract MarchMadnessFactory {
         string memory teamNameHome,
         string memory teamNameAway,
         uint256 scoreHome,
-        uint256 scoreAway
+        uint256 scoreAway,
+        string memory winner
     ) public onlyExecutor {
         MarchMadness(tournaments[year]).determineRound4Winners(
             regionName,
             teamNameHome,
             teamNameAway,
             scoreHome,
-            scoreAway
+            scoreAway,
+            winner
         );
     }
 
     /**
      * @dev Determines the winners of the Final Four matches and prepares the championship match.
      * @param year The year of the tournament.
-     * @param teamNamesHome Array containing the home team names for the two Final Four matches.
-     * @param teamNamesAway Array containing the away team names for the two Final Four matches.
-     * @param scoresHome Array containing the scores for the home teams in the two Final Four matches.
-     * @param scoresAway Array containing the scores for the away teams in the two Final Four matches.
+     * @param teamNames The array of team names for the Final Four matches.
+     * @param scores The array of scores for the Final Four matches.
+     * @param winners The array of winners for the Final Four matches.
      */
     function determineFinalFourWinners(
         uint256 year,
-        string[2] memory teamNamesHome,
-        string[2] memory teamNamesAway,
-        uint256[2] memory scoresHome,
-        uint256[2] memory scoresAway
+        string[4] memory teamNames,
+        uint256[4] memory scores,
+        string[2] memory winners
     ) public onlyExecutor {
         MarchMadness(tournaments[year]).determineFinalFourWinners(
-            teamNamesHome,
-            teamNamesAway,
-            scoresHome,
-            scoresAway
+            teamNames,
+            scores,
+            winners
         );
     }
 
@@ -212,19 +220,22 @@ contract MarchMadnessFactory {
      * @param teamNameAway The name of the away team in the championship match.
      * @param scoreHome The score of the home team in the championship match.
      * @param scoreAway The score of the away team in the championship match.
+     * @param winner The winner of the championship match.
      */
     function determineChampion(
         uint256 year,
         string memory teamNameHome,
         string memory teamNameAway,
         uint256 scoreHome,
-        uint256 scoreAway
+        uint256 scoreAway,
+        string memory winner
     ) public onlyExecutor {
         MarchMadness(tournaments[year]).determineChampion(
             teamNameHome,
             teamNameAway,
             scoreHome,
-            scoreAway
+            scoreAway,
+            winner
         );
     }
 
@@ -234,6 +245,8 @@ contract MarchMadnessFactory {
      */
     function setExecutor(address _executor) external onlyAdministrator {
         executor = _executor;
+
+        emit ExecutorChanged(_executor);
     }
 
     /**
@@ -242,6 +255,17 @@ contract MarchMadnessFactory {
      */
     function resetGame(uint256 year) external onlyExecutor {
         tournaments[year] = address(0);
+
+        emit TournamentReset(year);
+    }
+
+    /**
+     * @dev Pause / unpause the contract.
+     * @param _paused The new paused state.
+     */
+    function pause(bool _paused) external onlyAdministrator {
+        paused = _paused;
+        emit Paused(_paused);
     }
 
     /**
@@ -269,7 +293,9 @@ contract MarchMadnessFactory {
      * * Match Data (encoded): string home, string away, uint256 home_points, uint256 away_points, string winner
      * @return The First Four data in bytes format.
      */
-    function getFirstFourData(uint256 year) public view returns (bytes[4] memory) {
+    function getFirstFourData(
+        uint256 year
+    ) public view returns (bytes[4] memory) {
         return MarchMadness(tournaments[year]).getFirstFourData();
     }
 
@@ -325,11 +351,16 @@ contract MarchMadnessFactory {
         return allTeams;
     }
 
-    function getFinalResult(uint256 year) public view returns (uint256[63] memory) {
+    function getFinalResult(
+        uint256 year
+    ) public view returns (uint256[63] memory) {
         return MarchMadness(tournaments[year]).getFinalResult();
     }
 
-    function getTokenSymbol(uint256 year, uint8 teamId) public view returns (string memory) {
+    function getTokenSymbol(
+        uint256 year,
+        uint8 teamId
+    ) public view returns (string memory) {
         return MarchMadness(tournaments[year]).getTeamSymbol(teamId);
     }
 }

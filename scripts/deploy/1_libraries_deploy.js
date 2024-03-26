@@ -3,25 +3,25 @@ const path = require("path");
 const { ethers } = require("hardhat");
 
 async function main() {
-  const ImageBetTexts = await ethers.getContractFactory("ImageBetTexts");
+  const DinamicData = await ethers.getContractFactory("DinamicData");
 
   const variablesPath = path.join(__dirname, "..", "..", "contracts.json");
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName]["Libraries"];
 
-  if (networkData.ImageBetTexts === "") {
-    console.log(`Deploying ImageBetTexts...`);
-    const imageBetTexts = await ImageBetTexts.deploy();
-    await imageBetTexts.deployed();
-    console.log(`ImageBetTexts deployed at ${imageBetTexts.address}`);
+  if (networkData.DinamicData === "") {
+    console.log(`Deploying DinamicData...`);
+    const dinamicData = await DinamicData.deploy();
+    await dinamicData.deployed();
+    console.log(`DinamicData deployed at ${dinamicData.address}`);
 
-    networkData.ImageBetTexts = imageBetTexts.address;
+    networkData.DinamicData = dinamicData.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
   } else {
-    console.log(`ImageBetTexts already deployed at ${networkData.ImageBetTexts}`);
+    console.log(`DinamicData already deployed at ${networkData.DinamicData}`);
   }
 }
 

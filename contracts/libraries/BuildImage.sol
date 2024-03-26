@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./DinamicData.sol";
 import "./RegionsData.sol";
 
-library BuildImageAce {
+library BuildImage {
     function fullSvgImage(
         uint8[63] memory betValidator,
         string[63] memory tokens,

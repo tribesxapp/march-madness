@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "../interfaces/IMarchMadnessFactory.sol";
 import "../interfaces/IGamesHub.sol";
 
 interface IERC20 {
@@ -18,21 +19,6 @@ interface IERC20 {
     ) external returns (bool);
 
     function decimals() external view returns (uint8);
-}
-
-interface IMarchMadnessFactory {
-    function getGameStatus(
-        uint256 _gameYear
-    ) external view returns (bytes memory);
-
-    function getFinalResult(
-        uint256 _gameYear
-    ) external view returns (uint256[63] memory);
-
-    function getTeamSymbol(
-        uint256 _gameYear,
-        uint256 _teamId
-    ) external view returns (string memory);
 }
 
 interface INftMetadata {
@@ -86,7 +72,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
 
     modifier onlyGameContract() {
         require(
-            msg.sender == gamesHub.games(keccak256("BRACKETS")),
+            msg.sender == gamesHub.games(keccak256("MM_DEPLOYER")),
             "Caller is not game contract"
         );
         _;
@@ -96,7 +82,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         gamesHub = IGamesHub(_gamesHub);
 
         madnessContract = IMarchMadnessFactory(
-            gamesHub.games(keccak256("BRACKETS"))
+            gamesHub.games(keccak256("MM_DEPLOYER"))
         );
         token = IERC20(gamesHub.helpers(keccak256("TOKEN")));
 
@@ -147,7 +133,8 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param bets The array of bets for the game.
      */
     function safeMint(uint256 _gameYear, uint256[63] memory bets) public {
-        // require(!madnessContract.paused(), "Game paused.");
+        require(!madnessContract.paused(), "Game paused.");
+        
         (, uint8 status) = abi.decode(
             madnessContract.getGameStatus(_gameYear),
             (uint8, uint8)
@@ -304,7 +291,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param _tokenId The ID of the token.
      * @return The ID of the game the token is betting on.
      */
-    function getGameId(uint256 _tokenId) public view returns (uint256) {
+    function getGameYear(uint256 _tokenId) public view returns (uint256) {
         return tokenToGameYear[_tokenId];
     }
 

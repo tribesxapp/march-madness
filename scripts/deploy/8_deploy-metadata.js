@@ -12,15 +12,15 @@ async function main() {
   console.log(`GamesHub loaded at ${gamesHubAddress}`);
   const GamesHub = await ethers.getContractAt("GamesHub", gamesHubAddress);
 
-  const name = "METADATA";
-  if (networkData.NFT_METADATA === "") {
+  const name = "MM_METADATA";
+  if (networkData.MM_METADATA === "") {
     console.log(`Deploying NftMetadata...`);
     const NftMetadata = await ethers.getContractFactory("NftMetadata");
     const nftMetadata = await NftMetadata.deploy(gamesHubAddress);
     await nftMetadata.deployed();
     console.log(`NftMetadata deployed at ${nftMetadata.address}`);
 
-    networkData.NFT_METADATA = nftMetadata.address;
+    networkData.MM_METADATA = nftMetadata.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -34,7 +34,7 @@ async function main() {
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
   } else {
-    console.log(`NftMetadata already deployed at ${networkData.NFT_METADATA}`);
+    console.log(`NftMetadata already deployed at ${networkData.MM_METADATA}`);
   }
 }
 

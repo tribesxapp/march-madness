@@ -8,10 +8,13 @@ async function main() {
   const networkName = hre.network.name;
   const networkData = data[networkName];
 
-  // Ensure the BuildImageAce library is deployed
-  if (!networkData["Libraries"].BuildImageAce || networkData["Libraries"].BuildImageAce === "") {
+  // Ensure the BuildImage library is deployed
+  if (
+    !networkData["Libraries"].BuildImage ||
+    networkData["Libraries"].BuildImage === ""
+  ) {
     throw new Error(
-      "BuildImageAce library address not found. Please deploy BuildImageAce first."
+      "BuildImage library address not found. Please deploy BuildImage first."
     );
   }
 
@@ -19,21 +22,24 @@ async function main() {
   console.log(`GamesHub loaded at ${gamesHubAddress}`);
   const GamesHub = await ethers.getContractAt("GamesHub", gamesHubAddress);
 
-  const name = "NFT_IMAGE";
+  const name = "MM_IMAGE";
 
-  if (networkData.NFT_IMAGE === "") {
+  if (networkData.MM_IMAGE === "") {
     console.log("Deploying NftImage...");
-    // Linking BuildImageAce library
+    // Linking BuildImage library
     const NftImage = await ethers.getContractFactory("NftImage", {
       libraries: {
-        BuildImageAce: networkData["Libraries"].BuildImageAce,
+        BuildImage: networkData["Libraries"].BuildImage,
       },
     });
-    const nftImage = await NftImage.deploy(gamesHubAddress);
+    const nftImage = await NftImage.deploy(
+      gamesHubAddress,
+      networkData.Background
+    );
     await nftImage.deployed();
     console.log(`NftImage deployed at ${nftImage.address}`);
 
-    networkData.NFT_IMAGE = nftImage.address;
+    networkData.MM_IMAGE = nftImage.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
     console.log("Setting NftImage address to GamesHub...");
@@ -43,7 +49,7 @@ async function main() {
       true
     );
   } else {
-    console.log(`NftImage already deployed at ${networkData.NFT_IMAGE}`);
+    console.log(`NftImage already deployed at ${networkData.MM_IMAGE}`);
   }
 }
 

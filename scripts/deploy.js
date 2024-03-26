@@ -19,7 +19,7 @@ const runDeployScript = async (file) => {
   console.log(`Deploying ${file} on ${networkName}...`);
 
   try {
-    const { stdout, stderr } = await execAsync(`npx hardhat run ${filePath} --network ${networkName}`);
+    const { stdout, stderr } = await execAsync(`npx hardhat run "${filePath}" --network ${networkName}`);
     console.log(stdout);
     if (stderr) {
       console.error(stderr);
