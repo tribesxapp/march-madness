@@ -10,7 +10,6 @@ import "../interfaces/IOnchainMadnessTicket.sol";
 
 interface INftImage {
     function buildImage(
-        uint256 _gameId,
         uint256 _tokenId
     ) external view returns (string memory);
 }
@@ -78,7 +77,7 @@ contract NftMetadata {
                                 '","description":"Onchain Madness NFT from PerfectPool.","image":"',
                                 INftImage(
                                     gamesHub.helpers(keccak256("MM_IMAGE"))
-                                ).buildImage(_gameId, _tokenId),
+                                ).buildImage(_tokenId),
                                 '","attributes":[{"trait_type":"Game Status:","value":"',
                                 gameStatus(_gameId, _tokenId),
                                 '"},]}'

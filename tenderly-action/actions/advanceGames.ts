@@ -105,8 +105,8 @@ type TournamentRegions = {
 };
 
 function processGames(length: number, games: Game[]): Region {
-    let teams: string[] = Array.from({ length }, () => "");
-    let scores: number[] = Array.from({ length }, () => 0);
+    let teams: string[] = [];
+    let scores: number[] = [];
     let gamesOrdered: Game[] = games.sort((a, b) => {
         const gameNumber = parseInt(a.title.split(" - Game ")[1]);
         return gameNumber - parseInt(b.title.split(" - Game ")[1]);
@@ -115,17 +115,16 @@ function processGames(length: number, games: Game[]): Region {
 
     // Itera pelos jogos ordenados e constrói os arrays de retorno
     gamesOrdered.forEach((game) => {
-        const gameNumber = parseInt(game.title.split(" - Game ")[1]);
-        const indexHome = (gameNumber - 1) * 2;
-        const indexAway = indexHome + 1;
+        const homeTeam = game?.home?.alias || "";
+        const awayTeam = game?.away?.alias || "";
 
-        const homePoints = game.status === "closed" ? game.home_points : 0;
-        const awayPoints = game.status === "closed" ? game.away_points : 0;
+        const homePoints = game.status === "closed" ? (game?.home_points || 0) : 0;
+        const awayPoints = game.status === "closed" ? (game?.away_points || 0) : 0;
 
-        teams[indexHome] = game.home.alias;
-        teams[indexAway] = game.away.alias;
-        scores[indexHome] = homePoints;
-        scores[indexAway] = awayPoints;
+        teams.push(homeTeam);
+        teams.push(awayTeam);
+        scores.push(homePoints);
+        scores.push(awayPoints);
     });
 
     return { teams, scores };
@@ -151,10 +150,10 @@ const getMmInfo = async (
             throw new Error("Round data not found");
         }
 
-        let southRegion: any;
-        let westRegion: any;
-        let midwestRegion: any;
-        let eastRegion: any;
+        let southRegion: Region = { teams: [], scores: [] };
+        let westRegion: Region = { teams: [], scores: [] };
+        let midwestRegion: Region = { teams: [], scores: [] };
+        let eastRegion: Region = { teams: [], scores: [] };
 
         roundData.bracketed.forEach((r: any) => {
             if (r.bracket.name === "South Regional") {
@@ -428,7 +427,7 @@ const determineFirstFourWinners = async (
             winners.push("");
         }
     }
-    console.log("Winners:", winners);
+
     try {
         const estimatedGas = await marchMadness.estimateGas.determineFirstFourWinners(
             GAME_YEAR,
@@ -999,6 +998,56 @@ export const advanceGames: ActionFn = async (
 
     let advanceRoundTrigger = false;
 
+    console.log("Getting All Region Data");
+    const allRegionData = await getAllRegionDataDecoded(marchMadness, GAME_YEAR);
+
+    console.log("Checking for advancing games");
+
+    const regions = [
+        {
+            name: "SOUTH",
+            data: allRegionData.south,
+            apiData: {
+                round1: (await getMmInfo(madnessData, 1, context)).south,
+                round2: (await getMmInfo(madnessData, 2, context)).south,
+                round3: (await getMmInfo(madnessData, 3, context)).south,
+                round4: (await getMmInfo(madnessData, 4, context)).south
+            }
+        },
+        {
+            name: "WEST",
+            data: allRegionData.west,
+            apiData: {
+                round1: (await getMmInfo(madnessData, 1, context)).west,
+                round2: (await getMmInfo(madnessData, 2, context)).west,
+                round3: (await getMmInfo(madnessData, 3, context)).west,
+                round4: (await getMmInfo(madnessData, 4, context)).west
+            }
+        },
+        {
+            name: "MIDWEST",
+            data: allRegionData.midwest,
+            apiData: {
+                round1: (await getMmInfo(madnessData, 1, context)).midwest,
+                round2: (await getMmInfo(madnessData, 2, context)).midwest,
+                round3: (await getMmInfo(madnessData, 3, context)).midwest,
+                round4: (await getMmInfo(madnessData, 4, context)).midwest
+            }
+        },
+        {
+            name: "EAST",
+            data: allRegionData.east,
+            apiData: {
+                round1: (await getMmInfo(madnessData, 1, context)).east,
+                round2: (await getMmInfo(madnessData, 2, context)).east,
+                round3: (await getMmInfo(madnessData, 3, context)).east,
+                round4: (await getMmInfo(madnessData, 4, context)).east
+            }
+        }
+    ];
+    console.log("Regions:", JSON.stringify(regions, null, 2));
+    // return;
+
     if (currentRound === 0 && status === 1) {
         console.log("Getting First Four Data");
         const firstFourData = await getFirstFourDataDecoded(marchMadness, GAME_YEAR);
@@ -1044,53 +1093,6 @@ export const advanceGames: ActionFn = async (
             }
         }
     } else if ((currentRound >= 1 && currentRound < 5) && status === 2) {
-        console.log("Getting All Region Data");
-        const allRegionData = await getAllRegionDataDecoded(marchMadness, GAME_YEAR);
-
-        console.log("Checking for advancing games");
-
-        const regions = [
-            {
-                name: "SOUTH",
-                data: allRegionData.south,
-                apiData: {
-                    round1: (await getMmInfo(madnessData, 1, context)).south,
-                    round2: (await getMmInfo(madnessData, 2, context)).south,
-                    round3: (await getMmInfo(madnessData, 3, context)).south,
-                    round4: (await getMmInfo(madnessData, 4, context)).south
-                }
-            },
-            {
-                name: "WEST",
-                data: allRegionData.west,
-                apiData: {
-                    round1: (await getMmInfo(madnessData, 1, context)).west,
-                    round2: (await getMmInfo(madnessData, 2, context)).west,
-                    round3: (await getMmInfo(madnessData, 3, context)).west,
-                    round4: (await getMmInfo(madnessData, 4, context)).west
-                }
-            },
-            {
-                name: "MIDWEST",
-                data: allRegionData.midwest,
-                apiData: {
-                    round1: (await getMmInfo(madnessData, 1, context)).midwest,
-                    round2: (await getMmInfo(madnessData, 2, context)).midwest,
-                    round3: (await getMmInfo(madnessData, 3, context)).midwest,
-                    round4: (await getMmInfo(madnessData, 4, context)).midwest
-                }
-            },
-            {
-                name: "EAST",
-                data: allRegionData.east,
-                apiData: {
-                    round1: (await getMmInfo(madnessData, 1, context)).east,
-                    round2: (await getMmInfo(madnessData, 2, context)).east,
-                    round3: (await getMmInfo(madnessData, 3, context)).east,
-                    round4: (await getMmInfo(madnessData, 4, context)).east
-                }
-            }
-        ];
         let transactions = 0;
         switch (currentRound) {
             case 1:

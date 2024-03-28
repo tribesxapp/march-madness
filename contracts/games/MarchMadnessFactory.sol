@@ -376,7 +376,7 @@ contract MarchMadnessFactory {
         return MarchMadness(tournaments[year]).getFinalResult();
     }
 
-    function getTokenSymbol(
+    function getTeamSymbol(
         uint256 year,
         uint8 teamId
     ) public view returns (string memory) {

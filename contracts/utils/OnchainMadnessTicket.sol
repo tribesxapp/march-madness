@@ -78,7 +78,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         _;
     }
 
-    constructor(address _gamesHub) ERC721("AceTicket8", "ACET8") {
+    constructor(address _gamesHub) ERC721("OnchainMadnessTicket", "OMT") {
         gamesHub = IGamesHub(_gamesHub);
 
         madnessContract = IMarchMadnessFactory(

@@ -36,6 +36,9 @@
     "verify-token": "hardhat run scripts/verify/verifyFakeUSDCToken.js --network",
     "verify-madness": "hardhat run scripts/verify/verifyMarchMadness.js --network",
     "verify-nft": "hardhat run scripts/verify/verifyMadnessTicket.js --network",
+    "verify-metadata": "hardhat run scripts/verify/verifyNftMetadata.js --network",
+    "verify-image": "hardhat run scripts/verify/verifyNftImage.js --network",
+    "verify-libraries": "hardhat run scripts/verify/verifyLibraries.js --network",
     "verify-all": "node scripts/verify-all.js"
   }
 }
