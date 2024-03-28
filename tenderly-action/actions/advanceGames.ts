@@ -90,13 +90,6 @@ type FinalFour = {
     winner: string;
 };
 
-type FinalFourResult = {
-    teamsNameHome: string[];
-    teamsNameAway: string[];
-    scoresHome: number[];
-    scoresAway: number[];
-}
-
 type FinalMatch = {
     home: string;
     away: string;
@@ -263,7 +256,7 @@ const getFirstGame = async (madnessData: any, context: Context): Promise<Date> =
     }
 }
 
-const getFinalFour = async (madnessData: any, context: Context): Promise<FinalFourResult> => {
+const getFinalFour = async (madnessData: any, context: Context): Promise<Region> => {
     const sequence = 6;
 
     try {
@@ -280,21 +273,17 @@ const getFinalFour = async (madnessData: any, context: Context): Promise<FinalFo
 
         const game1 = roundData.games[0];
         const game2 = roundData.games[1];
-        let finalFour: FinalFourResult = {
-            teamsNameHome: [game1.home.alias, game2.home.alias],
-            teamsNameAway: [game1.away.alias, game2.away.alias],
-            scoresHome: [game1.home_points, game2.home_points],
-            scoresAway: [game1.away_points, game2.away_points],
+        let finalFour: Region = {
+            teams: [game1.home.alias, game1.away.alias, game2.home.alias, game2.away.alias],
+            scores: [game1.home_points, game1.away_points, game2.home_points, game2.away_points]
         };
 
         return finalFour;
     } catch (error) {
         console.error("Sportradar API call failed:", error);
         return {
-            teamsNameHome: [],
-            teamsNameAway: [],
-            scoresHome: [],
-            scoresAway: [],
+            teams: [],
+            scores: []
         };
     }
 }
@@ -409,7 +398,7 @@ const createNewTournament = async (
             }
         );
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`New March Madness contract created. TX: ${tx.hash}`);
         const tournamentContract = await marchMadness.tournaments(GAME_YEAR);
         return tournamentContract;
@@ -425,11 +414,24 @@ const determineFirstFourWinners = async (
     firstFour: Region,
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
+    let winners: string[] = [];
+    console.log("Teams:", firstFour.teams);
+    for (let i = 0; i < firstFour.teams.length; i += 2) {
+        if (firstFour.scores[i] > firstFour.scores[i + 1]) {
+            winners.push(firstFour.teams[i]);
+        } else if (firstFour.scores[i] < firstFour.scores[i + 1]) {
+            winners.push(firstFour.teams[i + 1]);
+        } else {
+            winners.push("");
+        }
+    }
+    console.log("Winners:", winners);
     try {
         const estimatedGas = await marchMadness.estimateGas.determineFirstFourWinners(
             GAME_YEAR,
             firstFour.teams,
-            firstFour.scores
+            firstFour.scores,
+            winners
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -441,13 +443,14 @@ const determineFirstFourWinners = async (
             GAME_YEAR,
             firstFour.teams,
             firstFour.scores,
+            winners,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
             }
         );
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`First Four Winners updated. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine First Four Winners:", error);
@@ -460,6 +463,7 @@ const determineRound1Winners = async (
     regionName: string,
     teamNames: string[],
     scores: number[],
+    teamsRound2: string[],
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
     try {
@@ -467,7 +471,8 @@ const determineRound1Winners = async (
             GAME_YEAR,
             regionName,
             teamNames,
-            scores
+            scores,
+            teamsRound2
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -480,13 +485,14 @@ const determineRound1Winners = async (
             regionName,
             teamNames,
             scores,
+            teamsRound2,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
             }
         );
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`Round 1 Winners updated for ${regionName}. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Round 1 Winners:", error);
@@ -499,6 +505,7 @@ const determineRound2Winners = async (
     regionName: string,
     teamNames: string[],
     scores: number[],
+    teamsRound3: string[],
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
     try {
@@ -506,7 +513,8 @@ const determineRound2Winners = async (
             GAME_YEAR,
             regionName,
             teamNames,
-            scores
+            scores,
+            teamsRound3
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -519,13 +527,14 @@ const determineRound2Winners = async (
             regionName,
             teamNames,
             scores,
+            teamsRound3,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
             }
         );
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`Round 2 Winners updated for ${regionName}. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Round 2 Winners:", error);
@@ -539,6 +548,7 @@ const determineRound3Winners = async (
     regionName: string,
     teamNames: string[],
     scores: number[],
+    teamsRound4: string[],
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
     try {
@@ -546,7 +556,8 @@ const determineRound3Winners = async (
             GAME_YEAR,
             regionName,
             teamNames,
-            scores
+            scores,
+            teamsRound4
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -559,13 +570,14 @@ const determineRound3Winners = async (
             regionName,
             teamNames,
             scores,
+            teamsRound4,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
             }
         );
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`Round 3 Winners updated for ${regionName}. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Round 3 Winners:", error);
@@ -582,6 +594,7 @@ const determineRound4Winners = async (
     scoreAway: number,
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
+    const winner = scoreHome === scoreAway ? "" : scoreHome > scoreAway ? teamNameHome : teamNameAway;
     try {
         const estimatedGas = await marchMadness.estimateGas.determineRound4Winners(
             GAME_YEAR,
@@ -589,7 +602,8 @@ const determineRound4Winners = async (
             teamNameHome,
             teamNameAway,
             scoreHome,
-            scoreAway
+            scoreAway,
+            winner
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -604,13 +618,14 @@ const determineRound4Winners = async (
             teamNameAway,
             scoreHome,
             scoreAway,
+            winner,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
             }
         );
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`Round 4 Winners updated for ${regionName}. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Round 4 Winners:", error);
@@ -620,19 +635,26 @@ const determineRound4Winners = async (
 const determineFinalFourWinners = async (
     marchMadness: any,
     GAME_YEAR: number,
-    teamNamesHome: string[],
-    teamNamesAway: string[],
-    scoresHome: number[],
-    scoresAway: number[],
+    teamNames: string[],
+    scores: number[],
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
+    let winners: string[] = [];
+    for (let i = 0; i < teamNames.length; i += 2) {
+        if (scores[i] > scores[i + 1]) {
+            winners.push(teamNames[i]);
+        } else if (scores[i] < scores[i + 1]) {
+            winners.push(teamNames[i + 1]);
+        } else {
+            winners.push("");
+        }
+    }
     try {
         const estimatedGas = await marchMadness.estimateGas.determineFinalFourWinners(
             GAME_YEAR,
-            teamNamesHome,
-            teamNamesAway,
-            scoresHome,
-            scoresAway
+            teamNames,
+            scores,
+            winners
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -642,17 +664,16 @@ const determineFinalFourWinners = async (
 
         const tx = await marchMadness.determineFinalFourWinners(
             GAME_YEAR,
-            teamNamesHome,
-            teamNamesAway,
-            scoresHome,
-            scoresAway,
+            teamNames,
+            scores,
+            winners,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
             }
         );
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`Final Four Winners updated. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Final Four Winners:", error);
@@ -668,13 +689,15 @@ const determineChampion = async (
     scoreAway: number,
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
+    const winner = scoreHome === scoreAway ? "" : scoreHome > scoreAway ? teamNameHome : teamNameAway;
     try {
         const estimatedGas = await marchMadness.estimateGas.determineChampion(
             GAME_YEAR,
             teamNameHome,
             teamNameAway,
             scoreHome,
-            scoreAway
+            scoreAway,
+            winner
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -688,13 +711,14 @@ const determineChampion = async (
             teamNameAway,
             scoreHome,
             scoreAway,
+            winner,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
             }
         );
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`Champion determined. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Champion:", error);
@@ -879,7 +903,7 @@ const advanceRound = async (
             gasPrice: gasPrice,
         });
 
-        //await tx.wait();
+        //await tx.wait(1);
         console.log(`Round advanced. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to advance round:", error);
@@ -1012,7 +1036,7 @@ export const advanceGames: ActionFn = async (
                     gasPrice: gasPrice,
                 });
 
-                //await tx.wait();
+                //await tx.wait(1);
                 console.log(`Bets closed for Game. TX: ${tx.hash}`);
             }
         }
@@ -1077,20 +1101,20 @@ export const advanceGames: ActionFn = async (
                     if (advance) {
                         advanceRoundTrigger = false;
                         console.log("Determining Round 1 Winners for", region.name, "Region");
-                        console.log("Region Data", region.apiData.round1);
                         await determineRound1Winners(
                             marchMadness,
                             GAME_YEAR,
                             region.name,
                             region.apiData.round1.teams,
                             region.apiData.round1.scores,
+                            region.apiData.round2.teams,
                             gasPrice
                         );
-                    }else{
+                    } else {
                         advanceRoundTrigger = true;
                     }
                 }
-                if(advanceRoundTrigger){
+                if (advanceRoundTrigger) {
                     console.log("Advancing Round");
                     await advanceRound(marchMadness, GAME_YEAR, gasPrice);
                 }
@@ -1107,21 +1131,20 @@ export const advanceGames: ActionFn = async (
                     if (advance) {
                         advanceRoundTrigger = false;
                         console.log("Determining Round 2 Winners for", region.name, "Region");
-                        console.log("Region Data API", region.apiData.round2);
-                        console.log("Region Data Blockchain", region.data);
                         await determineRound2Winners(
                             marchMadness,
                             GAME_YEAR,
                             region.name,
                             region.apiData.round2.teams,
                             region.apiData.round2.scores,
+                            region.apiData.round3.teams,
                             gasPrice
                         );
-                    }else{
+                    } else {
                         advanceRoundTrigger = true;
                     }
                 }
-                if(advanceRoundTrigger){
+                if (advanceRoundTrigger) {
                     console.log("Advancing Round");
                     await advanceRound(marchMadness, GAME_YEAR, gasPrice);
                 }
@@ -1139,21 +1162,20 @@ export const advanceGames: ActionFn = async (
                     if (advance) {
                         advanceRoundTrigger = false;
                         console.log("Determining Round 3 Winners for", region.name, "Region");
-                        console.log("Region Data API", region.apiData.round3);
-                        console.log("Region Data Blockchain", region.data);
                         await determineRound3Winners(
                             marchMadness,
                             GAME_YEAR,
                             region.name,
                             region.apiData.round3.teams,
                             region.apiData.round3.scores,
+                            region.apiData.round4.teams,
                             gasPrice
                         );
-                    }else{
+                    } else {
                         advanceRoundTrigger = true;
                     }
                 }
-                if(advanceRoundTrigger){
+                if (advanceRoundTrigger) {
                     console.log("Advancing Round");
                     await advanceRound(marchMadness, GAME_YEAR, gasPrice);
                 }
@@ -1174,11 +1196,11 @@ export const advanceGames: ActionFn = async (
                             region.apiData.round4.scores[1],
                             gasPrice
                         );
-                    }else{
+                    } else {
                         advanceRoundTrigger = true;
                     }
                 }
-                if(advanceRoundTrigger){
+                if (advanceRoundTrigger) {
                     console.log("Advancing Round");
                     await advanceRound(marchMadness, GAME_YEAR, gasPrice);
                 }
@@ -1201,10 +1223,8 @@ export const advanceGames: ActionFn = async (
             await determineFinalFourWinners(
                 marchMadness,
                 GAME_YEAR,
-                finalFourApiData.teamsNameHome,
-                finalFourApiData.teamsNameAway,
-                finalFourApiData.scoresHome,
-                finalFourApiData.scoresAway,
+                finalFourApiData.teams,
+                finalFourApiData.scores,
                 gasPrice
             );
 

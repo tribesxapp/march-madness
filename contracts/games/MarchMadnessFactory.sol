@@ -96,6 +96,14 @@ contract MarchMadnessFactory {
     }
 
     /**
+     * @dev Advances the round to the next one.
+     * @param year The year of the tournament.
+     */
+    function advanceRound(uint256 year) public {
+        MarchMadness(tournaments[year]).advanceRound();
+    }
+
+    /**
      * @dev Determines the winners of the Round 1 matches in a specific region.
      * @param year The year of the tournament.
      * @param regionName The name of the region.
@@ -335,16 +343,16 @@ contract MarchMadnessFactory {
         uint256 year
     ) public view returns (bytes[4] memory) {
         bytes[4] memory allTeams;
-        allTeams[0] = MarchMadness(tournaments[year]).getRegionData(
+        allTeams[0] = MarchMadness(tournaments[year]).getAllTeams(
             keccak256("SOUTH")
         );
-        allTeams[1] = MarchMadness(tournaments[year]).getRegionData(
+        allTeams[1] = MarchMadness(tournaments[year]).getAllTeams(
             keccak256("WEST")
         );
-        allTeams[2] = MarchMadness(tournaments[year]).getRegionData(
+        allTeams[2] = MarchMadness(tournaments[year]).getAllTeams(
             keccak256("MIDWEST")
         );
-        allTeams[3] = MarchMadness(tournaments[year]).getRegionData(
+        allTeams[3] = MarchMadness(tournaments[year]).getAllTeams(
             keccak256("EAST")
         );
 

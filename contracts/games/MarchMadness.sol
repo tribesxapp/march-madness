@@ -247,7 +247,7 @@ contract MarchMadness {
     /**
      * @dev Advances the round to the next one.
      */
-    function advanceRound() internal {
+    function advanceRound() public {
         currentRound++;
         emit RoundAdvanced(year, currentRound);
     }
@@ -310,10 +310,6 @@ contract MarchMadness {
                 matchesActualIndex++;
             }
         }
-
-        if (finishRound) {
-            advanceRound();
-        }
     }
 
     /**
@@ -375,10 +371,6 @@ contract MarchMadness {
                 matchesActualIndex++;
             }
         }
-
-        if(finishRound) {
-            advanceRound();
-        }
     }
 
     /**
@@ -439,10 +431,6 @@ contract MarchMadness {
                 region.matchRound4 = matchesActualIndex;
                 matchesActualIndex++;
             }
-        }
-
-        if(finishRound) {
-            advanceRound();
         }
     }
 
