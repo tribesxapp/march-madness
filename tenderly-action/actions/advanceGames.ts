@@ -398,7 +398,7 @@ const createNewTournament = async (
             }
         );
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`New March Madness contract created. TX: ${tx.hash}`);
         const tournamentContract = await marchMadness.tournaments(GAME_YEAR);
         return tournamentContract;
@@ -450,7 +450,7 @@ const determineFirstFourWinners = async (
             }
         );
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`First Four Winners updated. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine First Four Winners:", error);
@@ -492,7 +492,7 @@ const determineRound1Winners = async (
             }
         );
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`Round 1 Winners updated for ${regionName}. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Round 1 Winners:", error);
@@ -534,7 +534,7 @@ const determineRound2Winners = async (
             }
         );
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`Round 2 Winners updated for ${regionName}. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Round 2 Winners:", error);
@@ -577,7 +577,7 @@ const determineRound3Winners = async (
             }
         );
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`Round 3 Winners updated for ${regionName}. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Round 3 Winners:", error);
@@ -625,7 +625,7 @@ const determineRound4Winners = async (
             }
         );
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`Round 4 Winners updated for ${regionName}. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Round 4 Winners:", error);
@@ -673,7 +673,7 @@ const determineFinalFourWinners = async (
             }
         );
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`Final Four Winners updated. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Final Four Winners:", error);
@@ -718,7 +718,7 @@ const determineChampion = async (
             }
         );
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`Champion determined. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to determine Champion:", error);
@@ -903,7 +903,7 @@ const advanceRound = async (
             gasPrice: gasPrice,
         });
 
-        //await tx.wait(1);
+        await tx.wait(1);
         console.log(`Round advanced. TX: ${tx.hash}`);
     } catch (error) {
         console.error("Failed to advance round:", error);
@@ -1036,7 +1036,7 @@ export const advanceGames: ActionFn = async (
                     gasPrice: gasPrice,
                 });
 
-                //await tx.wait(1);
+                await tx.wait(1);
                 console.log(`Bets closed for Game. TX: ${tx.hash}`);
             }
         }
@@ -1088,6 +1088,7 @@ export const advanceGames: ActionFn = async (
                 }
             }
         ];
+        let transactions = 0;
         switch (currentRound) {
             case 1:
                 for (const region of regions) {
@@ -1110,8 +1111,12 @@ export const advanceGames: ActionFn = async (
                             region.apiData.round2.teams,
                             gasPrice
                         );
+                        transactions++;
                     } else {
                         advanceRoundTrigger = true;
+                    }
+                    if (transactions === 2) {
+                        return;
                     }
                 }
                 if (advanceRoundTrigger) {
@@ -1140,8 +1145,12 @@ export const advanceGames: ActionFn = async (
                             region.apiData.round3.teams,
                             gasPrice
                         );
+                        transactions++;
                     } else {
                         advanceRoundTrigger = true;
+                    }
+                    if (transactions === 2) {
+                        return;
                     }
                 }
                 if (advanceRoundTrigger) {
@@ -1171,8 +1180,12 @@ export const advanceGames: ActionFn = async (
                             region.apiData.round4.teams,
                             gasPrice
                         );
+                        transactions++;
                     } else {
                         advanceRoundTrigger = true;
+                    }
+                    if (transactions === 2) {
+                        return;
                     }
                 }
                 if (advanceRoundTrigger) {
@@ -1196,8 +1209,12 @@ export const advanceGames: ActionFn = async (
                             region.apiData.round4.scores[1],
                             gasPrice
                         );
+                        transactions++;
                     } else {
                         advanceRoundTrigger = true;
+                    }
+                    if (transactions === 2) {
+                        return;
                     }
                 }
                 if (advanceRoundTrigger) {
