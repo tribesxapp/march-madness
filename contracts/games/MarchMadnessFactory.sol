@@ -7,6 +7,10 @@ import "./MarchMadness.sol";
 
 contract MarchMadnessFactory {
     /** EVENTS **/
+    event BetsClosed(uint256 year);
+    event FirstFourDecided(uint256 year, string[4] winners);
+    event RoundAdvanced(uint256 year, uint8 round);
+    event TournamentFinished(uint256 year);
     event MarchMadnessCreated(address indexed proxy, uint256 year);
     event ExecutorChanged(address indexed executor);
     event TournamentReset(uint256 indexed year);
@@ -85,6 +89,8 @@ contract MarchMadnessFactory {
             scores,
             winners
         );
+
+        emit FirstFourDecided(year, winners);
     }
 
     /**
@@ -93,6 +99,8 @@ contract MarchMadnessFactory {
      */
     function closeBets(uint256 year) external onlyExecutor {
         MarchMadness(tournaments[year]).closeBets();
+
+        emit BetsClosed(year);
     }
 
     /**
@@ -101,6 +109,7 @@ contract MarchMadnessFactory {
      */
     function advanceRound(uint256 year) public {
         MarchMadness(tournaments[year]).advanceRound();
+        emit RoundAdvanced(year, MarchMadness(tournaments[year]).currentRound());
     }
 
     /**
@@ -245,6 +254,8 @@ contract MarchMadnessFactory {
             scoreAway,
             winner
         );
+
+        emit TournamentFinished(year);
     }
 
     /**

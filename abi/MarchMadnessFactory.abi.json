@@ -24,6 +24,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "BetsClosed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "executor",
@@ -31,6 +44,25 @@
       }
     ],
     "name": "ExecutorChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string[4]",
+        "name": "winners",
+        "type": "string[4]"
+      }
+    ],
+    "name": "FirstFourDecided",
     "type": "event"
   },
   {
@@ -69,6 +101,38 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "round",
+        "type": "uint8"
+      }
+    ],
+    "name": "RoundAdvanced",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "TournamentFinished",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "uint256",
         "name": "year",
@@ -77,6 +141,19 @@
     ],
     "name": "TournamentReset",
     "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
+    "name": "advanceRound",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "inputs": [

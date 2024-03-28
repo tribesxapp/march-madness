@@ -1,0 +1,26 @@
+{
+  "round1": [
+    {
+      "home": "GONZ",
+      "away": "BAY",
+      "home_points": { "type": "BigNumber", "hex": "0x5d" },
+      "away_points": { "type": "BigNumber", "hex": "0x5a" },
+      "winner": "GONZ"
+    },
+    {
+      "home": "BAY",
+      "away": "HOU",
+      "home_points": { "type": "BigNumber", "hex": "0x4e" },
+      "away_points": { "type": "BigNumber", "hex": "0x3b" },
+      "winner": "BAY"
+    }
+  ],
+  "final": {
+    "home": "GONZ",
+    "away": "BAY",
+    "home_points": { "type": "BigNumber", "hex": "0x46" },
+    "away_points": { "type": "BigNumber", "hex": "0x56" },
+    "winner": "BAY"
+  },
+  "winner": "BAY"
+}

@@ -2,12 +2,6 @@
 pragma solidity ^0.8.19;
 
 contract MarchMadness {
-    /** EVENTS **/
-    event BetsClosed(uint256 year);
-    event FirstFourDecided(uint256 year);
-    event GameInitialized(uint256 year);
-    event RoundAdvanced(uint256 year, uint8 round);
-    event TournamentFinished(uint256 year);
 
     /** CONSTANTS **/
     bytes32 public constant SOUTH = keccak256("SOUTH");
@@ -116,8 +110,6 @@ contract MarchMadness {
         _initRegion(EAST, _east);
 
         status = Status.BetsOn;
-
-        emit GameInitialized(_year);
     }
 
     function _initFirstFour(
@@ -195,14 +187,12 @@ contract MarchMadness {
         string[4] memory winners
     ) external {
         // onlyGameContract {
-        bool finishRound = true;
         for (uint8 i = 0; i < 8; i += 2) {
             Match storage currentMatch = matches[
                 firstFourMatches[matchCodes[i / 2]]
             ];
 
             if (currentMatch.winner != 0) {
-                finishRound = false;
                 continue;
             }
 
@@ -226,10 +216,6 @@ contract MarchMadness {
             currentMatch.home_points = scores[i];
             currentMatch.away_points = scores[i + 1];
         }
-
-        if (finishRound) {
-            emit FirstFourDecided(year);
-        }
     }
 
     /**
@@ -240,8 +226,6 @@ contract MarchMadness {
         require(status == Status.BetsOn, "MM-05");
         currentRound = 1;
         status = Status.OnGoing;
-
-        emit BetsClosed(year);
     }
 
     /**
@@ -249,7 +233,6 @@ contract MarchMadness {
      */
     function advanceRound() public {
         currentRound++;
-        emit RoundAdvanced(year, currentRound);
     }
 
     /**
@@ -477,38 +460,39 @@ contract MarchMadness {
         currentMatch.winner = teamToId[abi.encodePacked(winner)];
 
         uint8 roundMatchId;
-        if (regionHash == EAST) {
+        if (regionHash == WEST) {
             if (finalFour.matchesRound1[0] == 0) {
-                matchesActualIndex++;
                 finalFour.matchesRound1[0] = matchesActualIndex;
                 roundMatchId = matchesActualIndex;
+                matchesActualIndex++;
             } else {
                 roundMatchId = finalFour.matchesRound1[0];
             }
             matches[roundMatchId].home = currentMatch.winner;
-        } else if (regionHash == SOUTH) {
+        } else if (regionHash == EAST) {
             if (finalFour.matchesRound1[0] == 0) {
-                matchesActualIndex++;
                 finalFour.matchesRound1[0] = matchesActualIndex;
                 roundMatchId = matchesActualIndex;
+                matchesActualIndex++;
             } else {
                 roundMatchId = finalFour.matchesRound1[0];
             }
+
             matches[roundMatchId].away = currentMatch.winner;
-        } else if (regionHash == WEST) {
+        } else if (regionHash == SOUTH) {
             if (finalFour.matchesRound1[1] == 0) {
-                matchesActualIndex++;
                 finalFour.matchesRound1[1] = matchesActualIndex;
                 roundMatchId = matchesActualIndex;
+                matchesActualIndex++;
             } else {
                 roundMatchId = finalFour.matchesRound1[1];
             }
             matches[roundMatchId].home = currentMatch.winner;
         } else if (regionHash == MIDWEST) {
             if (finalFour.matchesRound1[1] == 0) {
-                matchesActualIndex++;
                 finalFour.matchesRound1[1] = matchesActualIndex;
                 roundMatchId = matchesActualIndex;
+                matchesActualIndex++;
             } else {
                 roundMatchId = finalFour.matchesRound1[1];
             }
@@ -530,7 +514,9 @@ contract MarchMadness {
         // onlyGameContract {
         require(currentRound == 5, "MM-05");
         for (uint8 i = 0; i < 4; i += 2) {
-            Match storage currentMatch = matches[finalFour.matchesRound1[i / 2]];
+            Match storage currentMatch = matches[
+                finalFour.matchesRound1[i / 2]
+            ];
 
             if (currentMatch.winner != 0) {
                 continue;
@@ -555,9 +541,14 @@ contract MarchMadness {
         }
 
         // Create the championship match with the winners of the Final Four
-        matches[matchesActualIndex++].home = teamToId[abi.encodePacked(winners[0])];
-        matches[matchesActualIndex++].away = teamToId[abi.encodePacked(winners[1])];
-        finalFour.matchFinal = matchesActualIndex - 1;
+        matches[matchesActualIndex].home = teamToId[
+            abi.encodePacked(winners[0])
+        ];
+        matches[matchesActualIndex].away = teamToId[
+            abi.encodePacked(winners[1])
+        ];
+        finalFour.matchFinal = matchesActualIndex;
+        matchesActualIndex++;
 
         advanceRound();
     }
@@ -580,16 +571,24 @@ contract MarchMadness {
         require(currentRound == 6, "MM-05");
 
         Match storage currentMatch = matches[finalFour.matchFinal];
+        
+        if(currentMatch.winner != 0) {
+            revert("MM-07");
+        }
 
-        require(
-            currentMatch.home == teamToId[abi.encodePacked(teamNameHome)],
-            "MM-03"
-        );
-
-        require(
-            currentMatch.away == teamToId[abi.encodePacked(teamNameAway)],
-            "MM-04"
-        );
+        uint8 homeId = teamToId[abi.encodePacked(teamNameHome)];
+        uint8 awayId = teamToId[abi.encodePacked(teamNameAway)];
+        if(currentMatch.home == awayId && currentMatch.away == homeId) {
+            currentMatch.home = homeId;
+            currentMatch.away = awayId;
+            currentMatch.home_points = scoreAway;
+            currentMatch.away_points = scoreHome;
+        } else {
+            require(currentMatch.home == homeId, "MM-03");
+            require(currentMatch.away == awayId, "MM-04");
+            currentMatch.home_points = scoreHome;
+            currentMatch.away_points = scoreAway;
+        }
 
         if (scoreHome == 0 && scoreAway == 0) {
             revert("MM-06");
@@ -597,15 +596,10 @@ contract MarchMadness {
 
         uint8 winnerId = teamToId[abi.encodePacked(winner)];
 
-        currentMatch.home_points = scoreHome;
-        currentMatch.away_points = scoreAway;
-
         currentMatch.winner = winnerId;
         finalFour.winner = winnerId;
 
         status = Status.Finished;
-
-        emit TournamentFinished(year);
     }
 
     /**

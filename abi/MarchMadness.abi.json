@@ -1,76 +1,5 @@
 [
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "year",
-        "type": "uint256"
-      }
-    ],
-    "name": "BetsClosed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "year",
-        "type": "uint256"
-      }
-    ],
-    "name": "FirstFourDecided",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "year",
-        "type": "uint256"
-      }
-    ],
-    "name": "GameInitialized",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "year",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "round",
-        "type": "uint8"
-      }
-    ],
-    "name": "RoundAdvanced",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "year",
-        "type": "uint256"
-      }
-    ],
-    "name": "TournamentFinished",
-    "type": "event"
-  },
-  {
     "inputs": [],
     "name": "EAST",
     "outputs": [
@@ -120,6 +49,13 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "advanceRound",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

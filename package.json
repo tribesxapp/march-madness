@@ -35,7 +35,7 @@
     "verify-games-hub": "hardhat run scripts/verify/verifyGamesHub.js --network",
     "verify-token": "hardhat run scripts/verify/verifyFakeUSDCToken.js --network",
     "verify-madness": "hardhat run scripts/verify/verifyMarchMadness.js --network",
-    "verify-madness-nft": "hardhat run scripts/verify/verifyMadnessTicket.js --network",
+    "verify-nft": "hardhat run scripts/verify/verifyMadnessTicket.js --network",
     "verify-all": "node scripts/verify-all.js"
   }
 }

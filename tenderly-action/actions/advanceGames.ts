@@ -105,13 +105,16 @@ type TournamentRegions = {
 };
 
 function processGames(length: number, games: Game[]): Region {
-    //preencher os arrays de times e scores com valores vazios, para garantir que os arrays tenham games.length * 2 itens
     let teams: string[] = Array.from({ length }, () => "");
     let scores: number[] = Array.from({ length }, () => 0);
+    let gamesOrdered: Game[] = games.sort((a, b) => {
+        const gameNumber = parseInt(a.title.split(" - Game ")[1]);
+        return gameNumber - parseInt(b.title.split(" - Game ")[1]);
+    });
 
 
     // Itera pelos jogos ordenados e constrói os arrays de retorno
-    games.forEach((game) => {
+    gamesOrdered.forEach((game) => {
         const gameNumber = parseInt(game.title.split(" - Game ")[1]);
         const indexHome = (gameNumber - 1) * 2;
         const indexAway = indexHome + 1;
@@ -271,8 +274,8 @@ const getFinalFour = async (madnessData: any, context: Context): Promise<Region>
             throw new Error("Round data not found");
         }
 
-        const game1 = roundData.games[0];
-        const game2 = roundData.games[1];
+        const game1 = roundData.games[0].title.indexOf("Game 1") !== -1 ? roundData.games[0] : roundData.games[1];
+        const game2 = roundData.games[1].title.indexOf("Game 2") !== -1 ? roundData.games[1] : roundData.games[0];
         let finalFour: Region = {
             teams: [game1.home.alias, game1.away.alias, game2.home.alias, game2.away.alias],
             scores: [game1.home_points, game1.away_points, game2.home_points, game2.away_points]
@@ -1092,7 +1095,7 @@ export const advanceGames: ActionFn = async (
         switch (currentRound) {
             case 1:
                 for (const region of regions) {
-                    
+
                     let advance = false;
                     region.data.matchesRound1.forEach((match) => {
                         if (match.winner === "") {
@@ -1128,7 +1131,7 @@ export const advanceGames: ActionFn = async (
                 for (const region of regions) {
                     let advance = false;
                     region.data.matchesRound2.forEach((match) => {
-                        
+
                         if (match.winner === "") {
                             advance = true;
                         }
@@ -1163,7 +1166,7 @@ export const advanceGames: ActionFn = async (
                 for (const region of regions) {
                     let advance = false;
                     region.data.matchesRound3.forEach((match) => {
-                        
+
                         if (match.winner === "") {
                             advance = true;
                         }
@@ -1245,14 +1248,19 @@ export const advanceGames: ActionFn = async (
             );
 
         }
-    } else if (currentRound === 6) {
+    } else if (currentRound === 6 && status === 2) {
         //matchFinal result
         console.log("Getting Final Four Data");
         const finalFourData = await getFinalFourDataDecoded(marchMadness, GAME_YEAR);
+
+
         let advance = finalFourData.winner === "" ? true : false;
         if (advance) {
             console.log("Determining Final Winner");
             const finalMatch = await getFinalMatch(madnessData, context);
+
+            console.log("Final Match Data:", finalMatch);
+            console.log("Final Four Data:", finalFourData);
             await determineChampion(
                 marchMadness,
                 GAME_YEAR,
@@ -1265,6 +1273,10 @@ export const advanceGames: ActionFn = async (
         }
     } else {
         console.log("Tournament is over, no more games to advance");
+        const allRegionData = await getAllRegionDataDecoded(marchMadness, GAME_YEAR);
+        const finalFourData = await getFinalFourDataDecoded(marchMadness, GAME_YEAR);
+        console.log("Regions All Data:", JSON.stringify(allRegionData));
+        console.log("Final Four Data:", JSON.stringify(finalFourData));
     }
 
 };
