@@ -514,8 +514,6 @@ contract MarchMadness {
             }
             matches[roundMatchId].away = currentMatch.winner;
         }
-
-        advanceRound();
     }
 
     /**

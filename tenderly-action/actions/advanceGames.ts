@@ -1092,7 +1092,7 @@ export const advanceGames: ActionFn = async (
         switch (currentRound) {
             case 1:
                 for (const region of regions) {
-                    console.log(" - Checking Region", region.name);
+                    
                     let advance = false;
                     region.data.matchesRound1.forEach((match) => {
                         if (match.winner === "") {
@@ -1128,7 +1128,7 @@ export const advanceGames: ActionFn = async (
                 for (const region of regions) {
                     let advance = false;
                     region.data.matchesRound2.forEach((match) => {
-                        console.log(" - Checking Region", region.name);
+                        
                         if (match.winner === "") {
                             advance = true;
                         }
@@ -1163,7 +1163,7 @@ export const advanceGames: ActionFn = async (
                 for (const region of regions) {
                     let advance = false;
                     region.data.matchesRound3.forEach((match) => {
-                        console.log(" - Checking Region", region.name);
+                        
                         if (match.winner === "") {
                             advance = true;
                         }
@@ -1195,7 +1195,6 @@ export const advanceGames: ActionFn = async (
                 break;
             case 4:
                 for (const region of regions) {
-                    console.log(" - Checking Region", region.name);
                     if (region.data.matchRound4.winner === "") {
                         advanceRoundTrigger = false;
                         console.log("Determining Round 4 Winner for", region.name, "Region");
