@@ -465,16 +465,25 @@ const determineRound1Winners = async (
     regionName: string,
     teamNames: string[],
     scores: number[],
-    teamsRound2: string[],
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
+    let winners: string[] = [];
+    for (let i = 0; i < teamNames.length; i += 2) {
+        if (scores[i] > scores[i + 1]) {
+            winners.push(teamNames[i]);
+        } else if (scores[i] < scores[i + 1]) {
+            winners.push(teamNames[i + 1]);
+        } else {
+            winners.push("");
+        }
+    }
     try {
         const estimatedGas = await marchMadness.estimateGas.determineRound1Winners(
             GAME_YEAR,
             regionName,
             teamNames,
             scores,
-            teamsRound2
+            winners
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -487,7 +496,7 @@ const determineRound1Winners = async (
             regionName,
             teamNames,
             scores,
-            teamsRound2,
+            winners,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
@@ -507,16 +516,25 @@ const determineRound2Winners = async (
     regionName: string,
     teamNames: string[],
     scores: number[],
-    teamsRound3: string[],
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
+    let winners: string[] = [];
+    for (let i = 0; i < teamNames.length; i += 2) {
+        if (scores[i] > scores[i + 1]) {
+            winners.push(teamNames[i]);
+        } else if (scores[i] < scores[i + 1]) {
+            winners.push(teamNames[i + 1]);
+        } else {
+            winners.push("");
+        }
+    }
     try {
         const estimatedGas = await marchMadness.estimateGas.determineRound2Winners(
             GAME_YEAR,
             regionName,
             teamNames,
             scores,
-            teamsRound3
+            winners
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -529,7 +547,7 @@ const determineRound2Winners = async (
             regionName,
             teamNames,
             scores,
-            teamsRound3,
+            winners,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
@@ -550,16 +568,25 @@ const determineRound3Winners = async (
     regionName: string,
     teamNames: string[],
     scores: number[],
-    teamsRound4: string[],
     gasPrice: ethers.BigNumber
 ): Promise<void> => {
+    let winners: string[] = [];
+    for (let i = 0; i < teamNames.length; i += 2) {
+        if (scores[i] > scores[i + 1]) {
+            winners.push(teamNames[i]);
+        } else if (scores[i] < scores[i + 1]) {
+            winners.push(teamNames[i + 1]);
+        } else {
+            winners.push("");
+        }
+    }
     try {
         const estimatedGas = await marchMadness.estimateGas.determineRound3Winners(
             GAME_YEAR,
             regionName,
             teamNames,
             scores,
-            teamsRound4
+            winners
         );
         const gasLimit = estimatedGas.mul(120).div(100);
 
@@ -572,7 +599,7 @@ const determineRound3Winners = async (
             regionName,
             teamNames,
             scores,
-            teamsRound4,
+            winners,
             {
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
@@ -1045,7 +1072,7 @@ export const advanceGames: ActionFn = async (
             }
         }
     ];
-    console.log("Regions:", JSON.stringify(regions, null, 2));
+    // console.log("Regions:", JSON.stringify(regions, null, 2));
     // return;
 
     if (currentRound === 0 && status === 1) {
@@ -1113,7 +1140,6 @@ export const advanceGames: ActionFn = async (
                             region.name,
                             region.apiData.round1.teams,
                             region.apiData.round1.scores,
-                            region.apiData.round2.teams,
                             gasPrice
                         );
                         transactions++;
@@ -1147,7 +1173,6 @@ export const advanceGames: ActionFn = async (
                             region.name,
                             region.apiData.round2.teams,
                             region.apiData.round2.scores,
-                            region.apiData.round3.teams,
                             gasPrice
                         );
                         transactions++;
@@ -1182,7 +1207,6 @@ export const advanceGames: ActionFn = async (
                             region.name,
                             region.apiData.round3.teams,
                             region.apiData.round3.scores,
-                            region.apiData.round4.teams,
                             gasPrice
                         );
                         transactions++;
