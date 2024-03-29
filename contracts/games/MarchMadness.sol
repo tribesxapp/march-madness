@@ -737,8 +737,8 @@ contract MarchMadness {
      * @dev Build a single array of all winners IDs for all regions, in the order: East, South, West, Midwest and the Final Four
      * @return The full array of winners IDs.
      */
-    function getFinalResult() public view returns (uint256[63] memory) {
-        uint256[63] memory winners;
+    function getFinalResult() public view returns (uint8[63] memory) {
+        uint8[63] memory winners;
 
         for (uint8 i = 0; i < 8; i++) {
             winners[i] = matches[regions[EAST].matchesRound1[i]].winner;
@@ -775,11 +775,18 @@ contract MarchMadness {
 
     /**
      * @dev Get a team symbol based on its ID.
-     * @param _teamId The ID of the team.
+     * @param _teamIds The IDs of the teams.
+     * @return The symbols of the teams.
      */
-    function getTeamSymbol(
-        uint8 _teamId
-    ) external view returns (string memory) {
-        return string(teams[_teamId]);
+    function getTeamSymbols(
+        uint8[63] memory _teamIds
+    ) external view returns (string[63] memory) {
+        string[63] memory symbols;
+
+        for (uint8 i = 0; i < 63; i++) {
+            symbols[i] = string(teams[_teamIds[i]]);
+        }
+
+        return symbols;
     }
 }

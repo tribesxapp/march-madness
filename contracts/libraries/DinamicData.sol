@@ -26,9 +26,9 @@ library DinamicData {
                     teamName,
                     "</tspan>",
                     "</text>",
-                    '<circle cx=""',
+                    '<circle cx="',
                     (x + 86).toString(),
-                    '" cy=""',
+                    '" cy="',
                     (y + 10).toString(),
                     '" r="3" fill="#',
                     (
@@ -52,21 +52,6 @@ library DinamicData {
                     '<tspan x="275" y="881.5" fill="white">',
                     nftId.toString(),
                     "</tspan></text>"
-                )
-            );
-    }
-
-    function svgPartUp(
-        string memory backgroundUrl
-    ) public pure returns (string memory) {
-        return
-            string(
-                abi.encodePacked(
-                    '<svg width="544" height="923" viewBox="0 0 544 923" fill="none" xmlns="http://www.w3.org/2000/svg">',
-                    '<image href="',
-                    backgroundUrl,
-                    '" x="0" y="0" height="923" width="544"/>',
-                    '<g clip-path="url(#clip0_630_4283)">'
                 )
             );
     }

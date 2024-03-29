@@ -372,14 +372,14 @@ contract MarchMadnessFactory {
 
     function getFinalResult(
         uint256 year
-    ) public view returns (uint256[63] memory) {
+    ) public view returns (uint8[63] memory) {
         return MarchMadness(tournaments[year]).getFinalResult();
     }
 
-    function getTeamSymbol(
+    function getTeamSymbols(
         uint256 year,
-        uint8 teamId
-    ) public view returns (string memory) {
-        return MarchMadness(tournaments[year]).getTeamSymbol(teamId);
+        uint8[63] memory teamIds
+    ) public view returns (string[63] memory) {
+        return MarchMadness(tournaments[year]).getTeamSymbols(teamIds);
     }
 }

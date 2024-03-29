@@ -16,7 +16,6 @@ async function main() {
     address: address,
     constructorArguments: [
       contracts[networkName]["GAMES_HUB"],
-      contracts[networkName]["Background"],
     ],
     contract: "contracts/utils/NftImage.sol:NftImage",
     libraries:{

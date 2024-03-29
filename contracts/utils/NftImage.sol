@@ -13,11 +13,9 @@ contract NftImage {
     using Strings for uint256;
 
     IGamesHub public gamesHub;
-    string public backgroundUrl;
 
-    constructor(address _gamesHub, string memory _backgroundUrl) {
+    constructor(address _gamesHub) {
         gamesHub = IGamesHub(_gamesHub);
-        backgroundUrl = _backgroundUrl;
     }
 
     modifier onlyAdmin() {
@@ -26,13 +24,6 @@ contract NftImage {
             "Caller is not admin"
         );
         _;
-    }
-
-    function changeBackgroundUrl(string memory _backgroundUrl)
-        public
-        onlyAdmin
-    {
-        backgroundUrl = _backgroundUrl;
     }
 
     function buildImage(
@@ -56,7 +47,6 @@ contract NftImage {
                                             keccak256("MM_TICKET")
                                         )
                                     ).getTeamSymbols(_tokenId),
-                                    backgroundUrl,
                                     _tokenId
                                 )
                             )

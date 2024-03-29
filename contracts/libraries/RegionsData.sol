@@ -4,12 +4,10 @@ pragma solidity ^0.8.0;
 import "./RegionBuilder.sol";
 
 library RegionsData {
-    function regionEast(
+    function regionSouth(
         uint8[63] memory betValidator,
         string[63] memory tokens
     ) external pure returns (string memory) {
-        uint16 xEven = 38;
-        uint16 xOdd = 142;
         return
             string(
                 abi.encodePacked(
@@ -18,97 +16,31 @@ library RegionsData {
                         tokens,
                         0,
                         [
-                            xEven,
+                            302,
                             160,
-                            xOdd,
-                            160,
-                            xEven,
-                            184,
-                            xOdd,
-                            184,
-                            xEven,
+                            302,
+                            183,
+                            302,
                             206,
-                            xOdd,
-                            206
+                            302,
+                            230,
+                            405,
+                            159,
+                            405,
+                            183
                         ]
                     ),
                     RegionBuilder.region2(
                         betValidator,
                         tokens,
                         6,
-                        [
-                            xEven,
-                            230,
-                            xOdd,
-                            230,
-                            xEven,
-                            306,
-                            xOdd,
-                            306,
-                            xEven,
-                            282
-                        ]
+                        [405, 206, 405, 230, 302, 281, 302, 305, 405, 281]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         tokens,
                         11,
-                        [xEven, 282, xOdd, 356, xEven, 356]
-                    )
-                )
-            );
-    }
-
-    function regionSouth(
-        uint8[63] memory betValidator,
-        string[63] memory tokens
-    ) external pure returns (string memory) {
-        uint16 xEven = 302;
-        uint16 xOdd = 406;
-        return
-            string(
-                abi.encodePacked(
-                    RegionBuilder.region1(
-                        betValidator,
-                        tokens,
-                        14,
-                        [
-                            xEven,
-                            160,
-                            xOdd,
-                            160,
-                            xEven,
-                            184,
-                            xOdd,
-                            184,
-                            xEven,
-                            206,
-                            xOdd,
-                            206
-                        ]
-                    ),
-                    RegionBuilder.region2(
-                        betValidator,
-                        tokens,
-                        20,
-                        [
-                            xEven,
-                            230,
-                            xOdd,
-                            230,
-                            xEven,
-                            306,
-                            xOdd,
-                            306,
-                            xEven,
-                            282
-                        ]
-                    ),
-                    RegionBuilder.region3(
-                        betValidator,
-                        tokens,
-                        25,
-                        [xEven, 282, xOdd, 356, xEven, 356]
+                        [405, 305, 302, 356, 405, 356]
                     )
                 )
             );
@@ -118,52 +50,50 @@ library RegionsData {
         uint8[63] memory betValidator,
         string[63] memory tokens
     ) external pure returns (string memory) {
-        uint16 xEven = 38;
-        uint16 xOdd = 142;
         return
             string(
                 abi.encodePacked(
                     RegionBuilder.region1(
                         betValidator,
                         tokens,
-                        28,
+                        14,
                         [
-                            xEven,
-                            448,
-                            xOdd,
-                            448,
-                            xEven,
-                            472,
-                            xOdd,
-                            472,
-                            xEven,
-                            494,
-                            xOdd,
-                            494
+                            uint16(38),
+                            160,
+                            uint16(38),
+                            183,
+                            uint16(38),
+                            206,
+                            uint16(38),
+                            230,
+                            141,
+                            160,
+                            141,
+                            183
                         ]
                     ),
                     RegionBuilder.region2(
                         betValidator,
                         tokens,
-                        34,
+                        20,
                         [
-                            xEven,
-                            518,
-                            xOdd,
-                            518,
-                            xEven,
-                            570,
-                            xOdd,
-                            570,
-                            xEven,
-                            594
+                            141,
+                            206,
+                            141,
+                            230,
+                            uint16(38),
+                            305,
+                            uint16(38),
+                            281,
+                            141,
+                            281
                         ]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         tokens,
-                        39,
-                        [xEven, 594, xOdd, 644, xEven, 644]
+                        25,
+                        [141, 305, uint16(38), 356, 141, 356]
                     )
                 )
             );
@@ -173,8 +103,55 @@ library RegionsData {
         uint8[63] memory betValidator,
         string[63] memory tokens
     ) external pure returns (string memory) {
-        uint16 xEven = 302;
-        uint16 xOdd = 406;
+        return
+            string(
+                abi.encodePacked(
+                    RegionBuilder.region1(
+                        betValidator,
+                        tokens,
+                        28,
+                        [
+                            302,
+                            447,
+                            302,
+                            471,
+                            302,
+                            494,
+                            302,
+                            517,
+                            405,
+                            447,
+                            405,
+                            471
+                        ]
+                    ),
+                    RegionBuilder.region2(
+                        betValidator,
+                        tokens,
+                        34,
+                        [405, 494, 405, 517, 302, 570, 302, 593, 302, 644]
+                    ),
+                    RegionBuilder.region3(
+                        betValidator,
+                        tokens,
+                        39,
+                        [
+                            405,
+                            570,
+                            405,
+                            593,
+                            405,
+                            644
+                        ]
+                    )
+                )
+            );
+    }
+
+    function regionEast(
+        uint8[63] memory betValidator,
+        string[63] memory tokens
+    ) external pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
@@ -183,42 +160,31 @@ library RegionsData {
                         tokens,
                         42,
                         [
-                            xEven,
-                            448,
-                            xOdd,
-                            448,
-                            xEven,
-                            472,
-                            xOdd,
-                            472,
-                            xEven,
+                            uint16(38),
+                            447,
+                            uint16(38),
+                            471,
+                            uint16(38),
                             494,
-                            xOdd,
-                            494
+                            uint16(38),
+                            517,
+                            141,
+                            447,
+                            141,
+                            471
                         ]
                     ),
                     RegionBuilder.region2(
                         betValidator,
                         tokens,
                         48,
-                        [
-                            xEven,
-                            518,
-                            xOdd,
-                            518,
-                            xEven,
-                            570,
-                            xOdd,
-                            570,
-                            xEven,
-                            594
-                        ]
+                        [141, 494, 141, 517, uint16(38), 570, uint16(38), 593, 141, 570]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         tokens,
                         53,
-                        [xEven, 594, xOdd, 644, xEven, 644]
+                        [141, 593, uint16(38), 644, 141, 644]
                     )
                 )
             );
@@ -235,7 +201,7 @@ library RegionsData {
                         betValidator,
                         tokens,
                         56,
-                        [38, 744, 142, 744, 302, 744, 406, 744]
+                        [uint16(38), 744, 142, 744, 302, 744, 406, 744]
                     ),
                     RegionBuilder.region3(
                         betValidator,

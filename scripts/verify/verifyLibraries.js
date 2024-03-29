@@ -18,6 +18,7 @@ async function main() {
     contract: "contracts/libraries/BuildImage.sol:BuildImage",
     libraries:{
       "DinamicData": contracts[networkName].Libraries.DinamicData,
+      "FixedData": contracts[networkName].Libraries.FixedData,
       "RegionsData": contracts[networkName].Libraries.RegionsData,
     }
   });

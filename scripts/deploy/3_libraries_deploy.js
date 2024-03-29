@@ -19,6 +19,7 @@ async function main() {
     );
   }
   const dinamicDataAddress = networkData.DinamicData;
+  const fixedDataAddress = networkData.FixedData;
   const regionDataAddress = networkData.RegionsData;
 
   if (networkData.BuildImage === "") {
@@ -28,6 +29,7 @@ async function main() {
 
     const BuildImage = await ethers.getContractFactory("BuildImage", {
       libraries: {
+        FixedData: fixedDataAddress,
         DinamicData: dinamicDataAddress,
         RegionsData: regionDataAddress,
       },

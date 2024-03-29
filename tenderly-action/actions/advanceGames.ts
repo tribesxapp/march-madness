@@ -1072,8 +1072,6 @@ export const advanceGames: ActionFn = async (
             }
         }
     ];
-    // console.log("Regions:", JSON.stringify(regions, null, 2));
-    // return;
 
     if (currentRound === 0 && status === 1) {
         console.log("Getting First Four Data");

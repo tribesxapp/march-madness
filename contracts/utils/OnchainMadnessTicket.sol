@@ -53,7 +53,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     IMarchMadnessFactory madnessContract;
 
     mapping(uint256 => uint256) private tokenToGameYear;
-    mapping(uint256 => uint256[63]) private nftBet;
+    mapping(uint256 => uint8[63]) private nftBet;
     mapping(bytes32 => uint256[]) private betCodeToTokenIds;
     mapping(bytes32 => uint256) private betQty;
     mapping(bytes32 => uint256) private gamePot;
@@ -132,7 +132,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param _gameYear The ID of the game to bet on.
      * @param bets The array of bets for the game.
      */
-    function safeMint(uint256 _gameYear, uint256[63] memory bets) public {
+    function safeMint(uint256 _gameYear, uint8[63] memory bets) public {
         require(!madnessContract.paused(), "Game paused.");
         
         (, uint8 status) = abi.decode(
@@ -282,7 +282,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      */
     function getBetData(
         uint256 _tokenId
-    ) public view returns (uint256[63] memory) {
+    ) public view returns (uint8[63] memory) {
         return nftBet[_tokenId];
     }
 
@@ -303,8 +303,8 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function betValidator(
         uint256 _tokenId
     ) public view returns (uint8[63] memory) {
-        uint256[63] memory bets = nftBet[_tokenId];
-        uint256[63] memory results = madnessContract.getFinalResult(
+        uint8[63] memory bets = nftBet[_tokenId];
+        uint8[63] memory results = madnessContract.getFinalResult(
             tokenToGameYear[_tokenId]
         );
         uint8[63] memory validator;
@@ -326,15 +326,12 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function getTeamSymbols(
         uint256 _tokenId
     ) public view returns (string[63] memory) {
-        string[63] memory symbols;
 
-        for (uint256 i = 0; i < 63; i++) {
-            symbols[i] = madnessContract.getTeamSymbol(
+        
+        return madnessContract.getTeamSymbols(
                 tokenToGameYear[_tokenId],
-                nftBet[_tokenId][i]
+                nftBet[_tokenId]
             );
-        }
-        return symbols;
     }
 
     /**

@@ -33,8 +33,7 @@ async function main() {
       },
     });
     const nftImage = await NftImage.deploy(
-      gamesHubAddress,
-      networkData.Background
+      gamesHubAddress
     );
     await nftImage.deployed();
     console.log(`NftImage deployed at ${nftImage.address}`);
