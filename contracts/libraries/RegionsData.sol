@@ -6,14 +6,14 @@ import "./RegionBuilder.sol";
 library RegionsData {
     function regionSouth(
         uint8[63] memory betValidator,
-        string[63] memory tokens
+        string[63] memory teams
     ) external pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
                     RegionBuilder.region1(
                         betValidator,
-                        tokens,
+                        teams,
                         0,
                         [
                             302,
@@ -32,13 +32,13 @@ library RegionsData {
                     ),
                     RegionBuilder.region2(
                         betValidator,
-                        tokens,
+                        teams,
                         6,
                         [405, 206, 405, 230, 302, 281, 302, 305, 405, 281]
                     ),
                     RegionBuilder.region3(
                         betValidator,
-                        tokens,
+                        teams,
                         11,
                         [405, 305, 302, 356, 405, 356]
                     )
@@ -48,15 +48,15 @@ library RegionsData {
 
     function regionWest(
         uint8[63] memory betValidator,
-        string[63] memory tokens
+        string[63] memory teams
     ) external pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
                     RegionBuilder.region1(
                         betValidator,
-                        tokens,
-                        14,
+                        teams,
+                        15,
                         [
                             uint16(38),
                             160,
@@ -74,25 +74,25 @@ library RegionsData {
                     ),
                     RegionBuilder.region2(
                         betValidator,
-                        tokens,
-                        20,
+                        teams,
+                        21,
                         [
                             141,
                             206,
                             141,
                             230,
                             uint16(38),
-                            305,
-                            uint16(38),
                             281,
+                            uint16(38),
+                            305,
                             141,
                             281
                         ]
                     ),
                     RegionBuilder.region3(
                         betValidator,
-                        tokens,
-                        25,
+                        teams,
+                        26,
                         [141, 305, uint16(38), 356, 141, 356]
                     )
                 )
@@ -101,15 +101,15 @@ library RegionsData {
 
     function regionMidWest(
         uint8[63] memory betValidator,
-        string[63] memory tokens
+        string[63] memory teams
     ) external pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
                     RegionBuilder.region1(
                         betValidator,
-                        tokens,
-                        28,
+                        teams,
+                        30,
                         [
                             302,
                             447,
@@ -127,19 +127,19 @@ library RegionsData {
                     ),
                     RegionBuilder.region2(
                         betValidator,
-                        tokens,
-                        34,
-                        [405, 494, 405, 517, 302, 570, 302, 593, 302, 644]
+                        teams,
+                        36,
+                        [405, 494, 405, 517, 302, 570, 302, 593, 405, 570]
                     ),
                     RegionBuilder.region3(
                         betValidator,
-                        tokens,
-                        39,
+                        teams,
+                        41,
                         [
                             405,
-                            570,
-                            405,
                             593,
+                            302,
+                            644,
                             405,
                             644
                         ]
@@ -150,15 +150,15 @@ library RegionsData {
 
     function regionEast(
         uint8[63] memory betValidator,
-        string[63] memory tokens
+        string[63] memory teams
     ) external pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
                     RegionBuilder.region1(
                         betValidator,
-                        tokens,
-                        42,
+                        teams,
+                        45,
                         [
                             uint16(38),
                             447,
@@ -176,14 +176,14 @@ library RegionsData {
                     ),
                     RegionBuilder.region2(
                         betValidator,
-                        tokens,
-                        48,
+                        teams,
+                        51,
                         [141, 494, 141, 517, uint16(38), 570, uint16(38), 593, 141, 570]
                     ),
                     RegionBuilder.region3(
                         betValidator,
-                        tokens,
-                        53,
+                        teams,
+                        56,
                         [141, 593, uint16(38), 644, 141, 644]
                     )
                 )
@@ -192,20 +192,19 @@ library RegionsData {
 
     function finalFour(
         uint8[63] memory betValidator,
-        string[63] memory tokens
+        string[63] memory teams
     ) external pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
                     RegionBuilder.finalFour1(
                         betValidator,
-                        tokens,
-                        56,
+                        teams,
                         [uint16(38), 744, 142, 744, 302, 744, 406, 744]
                     ),
                     RegionBuilder.region3(
                         betValidator,
-                        tokens,
+                        teams,
                         60,
                         [172, 802, 274, 802, 222, 826]
                     )
