@@ -427,6 +427,7 @@ const determineFirstFourWinners = async (
             winners.push("");
         }
     }
+    console.log("Winners:", winners);
 
     try {
         const estimatedGas = await marchMadness.estimateGas.determineFirstFourWinners(
@@ -1073,9 +1074,10 @@ export const advanceGames: ActionFn = async (
         }
     ];
 
-    if (currentRound === 0 && status === 1) {
+    if (currentRound === 0) {
         console.log("Getting First Four Data");
         const firstFourData = await getFirstFourDataDecoded(marchMadness, GAME_YEAR);
+        const firstFour = await getFirstFour(madnessData, context);
 
         let avancar = false;
         firstFourData.matches.forEach((match) => {
@@ -1084,9 +1086,9 @@ export const advanceGames: ActionFn = async (
             }
         });
 
-        if (avancar) {
+        if (avancar && status === 0) {
             console.log("Determining First Four Winners");
-            const firstFour = await getFirstFour(madnessData, context);
+            
             if (firstFour.teams.length === 0) {
                 console.error("Failed to fetch First Four data");
                 return;
@@ -1117,12 +1119,11 @@ export const advanceGames: ActionFn = async (
                 console.log(`Bets closed for Game. TX: ${tx.hash}`);
             }
         }
-    } else if ((currentRound >= 1 && currentRound < 5) && status === 2) {
+    } else if (currentRound >= 1 && currentRound < 5 && status === 2) {
         let transactions = 0;
         switch (currentRound) {
             case 1:
                 for (const region of regions) {
-
                     let advance = false;
                     region.data.matchesRound1.forEach((match) => {
                         if (match.winner === "") {
@@ -1299,8 +1300,8 @@ export const advanceGames: ActionFn = async (
         console.log("Tournament is over, no more games to advance");
         const allRegionData = await getAllRegionDataDecoded(marchMadness, GAME_YEAR);
         const finalFourData = await getFinalFourDataDecoded(marchMadness, GAME_YEAR);
-        console.log("Regions All Data:", JSON.stringify(allRegionData));
-        console.log("Final Four Data:", JSON.stringify(finalFourData));
+        console.log("Regions All Data:", JSON.stringify(allRegionData, null, 2));
+        console.log("Final Four Data:", JSON.stringify(finalFourData, null, 2));
     }
 
 };

@@ -436,9 +436,9 @@
     "name": "getBetData",
     "outputs": [
       {
-        "internalType": "uint256[63]",
+        "internalType": "uint8[63]",
         "name": "",
-        "type": "uint256[63]"
+        "type": "uint8[63]"
       }
     ],
     "stateMutability": "view",
@@ -636,9 +636,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256[63]",
+        "internalType": "uint8[63]",
         "name": "bets",
-        "type": "uint256[63]"
+        "type": "uint8[63]"
       }
     ],
     "name": "safeMint",

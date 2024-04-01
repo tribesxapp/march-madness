@@ -50,8 +50,6 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     uint256 public price;
     uint8 public protocolFee = 100;
 
-    IMarchMadnessFactory madnessContract;
-
     mapping(uint256 => uint256) private tokenToGameYear;
     mapping(uint256 => uint8[63]) private nftBet;
     mapping(bytes32 => uint256[]) private betCodeToTokenIds;
@@ -80,10 +78,6 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
 
     constructor(address _gamesHub) ERC721("OnchainMadnessTicket", "OMT") {
         gamesHub = IGamesHub(_gamesHub);
-
-        madnessContract = IMarchMadnessFactory(
-            gamesHub.games(keccak256("MM_DEPLOYER"))
-        );
         token = IERC20(gamesHub.helpers(keccak256("TOKEN")));
 
         _nextTokenId = 1;
@@ -133,6 +127,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param bets The array of bets for the game.
      */
     function safeMint(uint256 _gameYear, uint8[63] memory bets) public {
+        IMarchMadnessFactory madnessContract = IMarchMadnessFactory(
+            gamesHub.games(keccak256("MM_DEPLOYER"))
+        );
         require(!madnessContract.paused(), "Game paused.");
         
         (, uint8 status) = abi.decode(
@@ -165,7 +162,10 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param _tokenId The ID of the ticket to claim tokens from.
      */
     function claimTokens(uint256 _tokenId) public nonReentrant {
-        // require(!madnessContract.paused(), "Game paused.");
+        IMarchMadnessFactory madnessContract = IMarchMadnessFactory(
+            gamesHub.games(keccak256("MM_DEPLOYER"))
+        );
+        require(!madnessContract.paused(), "Game paused.");
         require(tokenClaimed[_tokenId] == 0, "Tokens already claimed.");
 
         (, uint8 status) = abi.decode(
@@ -304,7 +304,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint8[63] memory) {
         uint8[63] memory bets = nftBet[_tokenId];
-        uint8[63] memory results = madnessContract.getFinalResult(
+        uint8[63] memory results = IMarchMadnessFactory(
+            gamesHub.games(keccak256("MM_DEPLOYER"))
+        ).getFinalResult(
             tokenToGameYear[_tokenId]
         );
         uint8[63] memory validator;
@@ -326,9 +328,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function getTeamSymbols(
         uint256 _tokenId
     ) public view returns (string[63] memory) {
-
-        
-        return madnessContract.getTeamSymbols(
+        return IMarchMadnessFactory(
+            gamesHub.games(keccak256("MM_DEPLOYER"))
+        ).getTeamSymbols(
                 tokenToGameYear[_tokenId],
                 nftBet[_tokenId]
             );
@@ -343,6 +345,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function amountPrizeClaimed(
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
+        IMarchMadnessFactory madnessContract = IMarchMadnessFactory(
+            gamesHub.games(keccak256("MM_DEPLOYER"))
+        );
         return (
             gamePot[
                 keccak256(

@@ -542,9 +542,9 @@
     "name": "getFinalResult",
     "outputs": [
       {
-        "internalType": "uint256[63]",
+        "internalType": "uint8[63]",
         "name": "",
-        "type": "uint256[63]"
+        "type": "uint8[63]"
       }
     ],
     "stateMutability": "view",
@@ -596,17 +596,17 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint8",
-        "name": "teamId",
-        "type": "uint8"
+        "internalType": "uint8[63]",
+        "name": "teamIds",
+        "type": "uint8[63]"
       }
     ],
-    "name": "getTeamSymbol",
+    "name": "getTeamSymbols",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "string[63]",
         "name": "",
-        "type": "string"
+        "type": "string[63]"
       }
     ],
     "stateMutability": "view",
