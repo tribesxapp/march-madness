@@ -326,25 +326,35 @@ const getFinalMatch = async (madnessData: any, context: Context): Promise<FinalM
 }
 
 
-const getGasPrice = async (
-    baseScanUrl: string,
-    baseScanKey: string
-): Promise<ethers.BigNumber> => {
-    try {
-        const response = await axios.get(
-            `${baseScanUrl}?module=proxy&action=eth_gasPrice&apikey=${baseScanKey}`
-        );
-        const proposedGasPriceHex = response.data.result;
-        const gasPriceGwei = ethers.BigNumber.from(proposedGasPriceHex);
+// const getGasPrice = async (
+//     baseScanUrl: string,
+//     baseScanKey: string
+// ): Promise<ethers.BigNumber> => {
+//     try {
+//         const response = await axios.get(
+//             `${baseScanUrl}?module=proxy&action=eth_gasPrice&apikey=${baseScanKey}`
+//         );
+//         const proposedGasPriceHex = response.data.result;
+//         const gasPriceGwei = ethers.BigNumber.from(proposedGasPriceHex);
 
-        // Increase the gas price by 10%
-        const increasedGasPrice = gasPriceGwei.mul(110).div(100);
-        return increasedGasPrice;
+//         // Increase the gas price by 10%
+//         const increasedGasPrice = gasPriceGwei.mul(110).div(100);
+//         return increasedGasPrice;
+//     } catch (error) {
+//         console.log("Failed to fetch gas price:", error);
+//         return ethers.utils.parseUnits("10", "gwei");
+//     }
+// };
+
+async function getGasPrice(provider: ethers.providers.Provider): Promise<ethers.BigNumber> {
+    try {
+        const gasPrice = await provider.getGasPrice();
+        return gasPrice;
     } catch (error) {
-        console.log("Failed to fetch gas price:", error);
-        return ethers.utils.parseUnits("10", "gwei");
+        console.error("Erro ao obter o preço do GAS:", error);
+        throw error;
     }
-};
+}
 
 const createNewTournament = async (
     madnessData: any,
@@ -945,8 +955,6 @@ export const advanceGames: ActionFn = async (
     event: Event
 ) => {
     const privateKey = await context.secrets.get("project.addressPrivateKey");
-    const baseScanKey = await context.secrets.get("baseScan.key");
-    const baseScanUrl = await context.secrets.get("baseSepolia.apiUrl");
     const rpcUrl = await context.secrets.get("baseSepolia.rpcUrl");
     const marchMadnessAdress = await context.secrets.get("baseSepolia.marchMadness.contract");
     const abiText = await context.secrets.get("marchMadness.abi");
@@ -954,8 +962,6 @@ export const advanceGames: ActionFn = async (
     const apiUrl = await context.secrets.get("marchMadness.apiUrl");
     let madnessData;
     const GAME_YEAR = 2021;
-
-    const gasPrice = await getGasPrice(baseScanUrl, baseScanKey);
 
     console.log("Getting March Madness data");
     try {
@@ -974,6 +980,8 @@ export const advanceGames: ActionFn = async (
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
     const wallet = new ethers.Wallet(privateKey, provider);
     console.log("Wallet:", wallet.address);
+
+    const gasPrice = await getGasPrice(provider);
 
     console.log("Fetching MarchMadness contract");
     let marchMadness: any;
@@ -1088,7 +1096,7 @@ export const advanceGames: ActionFn = async (
 
         if (avancar && status === 0) {
             console.log("Determining First Four Winners");
-            
+
             if (firstFour.teams.length === 0) {
                 console.error("Failed to fetch First Four data");
                 return;

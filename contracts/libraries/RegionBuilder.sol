@@ -144,20 +144,20 @@ library RegionBuilder {
                     DinamicData.buildBetSquare(
                         coords[2],
                         coords[3],
-                        teams[59],
-                        betValidator[59]
-                    ),
-                    DinamicData.buildBetSquare(
-                        coords[4],
-                        coords[5],
                         teams[14],
                         betValidator[14]
                     ),
                     DinamicData.buildBetSquare(
-                        coords[6],
-                        coords[7],
+                        coords[4],
+                        coords[5],
                         teams[44],
                         betValidator[44]
+                    ),
+                    DinamicData.buildBetSquare(
+                        coords[6],
+                        coords[7],
+                        teams[59],
+                        betValidator[59]
                     )
                 )
             );

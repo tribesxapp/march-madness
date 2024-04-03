@@ -14,7 +14,7 @@ library RegionsData {
                     RegionBuilder.region1(
                         betValidator,
                         teams,
-                        0,
+                        30,
                         [
                             302,
                             160,
@@ -33,13 +33,13 @@ library RegionsData {
                     RegionBuilder.region2(
                         betValidator,
                         teams,
-                        6,
+                        36,
                         [405, 206, 405, 230, 302, 281, 302, 305, 405, 281]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         teams,
-                        11,
+                        41,
                         [405, 305, 302, 356, 405, 356]
                     )
                 )
@@ -109,7 +109,7 @@ library RegionsData {
                     RegionBuilder.region1(
                         betValidator,
                         teams,
-                        30,
+                        45,
                         [
                             302,
                             447,
@@ -128,13 +128,13 @@ library RegionsData {
                     RegionBuilder.region2(
                         betValidator,
                         teams,
-                        36,
+                        51,
                         [405, 494, 405, 517, 302, 570, 302, 593, 405, 570]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         teams,
-                        41,
+                        56,
                         [
                             405,
                             593,
@@ -158,7 +158,7 @@ library RegionsData {
                     RegionBuilder.region1(
                         betValidator,
                         teams,
-                        45,
+                        0,
                         [
                             uint16(38),
                             447,
@@ -177,13 +177,13 @@ library RegionsData {
                     RegionBuilder.region2(
                         betValidator,
                         teams,
-                        51,
+                        6,
                         [141, 494, 141, 517, uint16(38), 570, uint16(38), 593, 141, 570]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         teams,
-                        56,
+                        11,
                         [141, 593, uint16(38), 644, 141, 644]
                     )
                 )
